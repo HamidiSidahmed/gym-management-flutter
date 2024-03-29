@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:gym_sof/view/edit_person.dart';
+import 'package:gym_sof/view/edit_member.dart';
 
 class PersonCard extends StatelessWidget {
   const PersonCard({super.key});
@@ -196,26 +196,157 @@ class PersonCard extends StatelessWidget {
           ),
           Container(
             height: 165.h,
-            
- 
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Icon(
-                  Icons.block,
-                  size: 26,
-                  color: Colors.red,
-                ),
-                Icon(
-                  Icons.delete,
-                  color: Colors.red,
-                  size: 26,
+                InkWell(
+                  onTap: () {
+                    showModalBottomSheet(
+                        shape: BeveledRectangleBorder(
+                            borderRadius: BorderRadius.circular(35.r)),
+                        context: context,
+                        builder: (context) => Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(35)),
+                              width: 1.sw,
+                              height: 125.h,
+                              child: Column(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceEvenly,
+                                children: [
+                                  Container(
+                                    decoration: BoxDecoration(
+                                        color: Colors.grey[350],
+                                        borderRadius:
+                                            BorderRadius.circular(15.r)),
+                                    width: 250.w,
+                                    height: 40.h,
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          margin: EdgeInsets.only(left: 20.w),
+                                          child: Text(
+                                            "25/09/2002",
+                                            style: TextStyle(fontSize: 14.sp),
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            showCupertinoModalPopup(
+                                              context: context,
+                                              builder: (context) {
+                                                return Container(
+                                                  decoration: BoxDecoration(
+                                                      color: Colors.white,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              35)),
+                                                  height: 175.h,
+                                                  child: CupertinoDatePicker(
+                                                      initialDateTime:
+                                                          DateTime(2023, 1, 1),
+                                                      minimumYear: 2023,
+                                                      mode:
+                                                          CupertinoDatePickerMode
+                                                              .date,
+                                                      onDateTimeChanged:
+                                                          (DateTime time) {}),
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                              width: 35.w,
+                                              height: 35.h,
+                                              margin:
+                                                  EdgeInsets.only(right: 10.w),
+                                              child: Icon(
+                                                Icons.calendar_month_sharp,
+                                                color: Colors.black,
+                                                size: 22.sp,
+                                              )),
+                                        )
+                                      ],
+                                    ),
+                                  ),
+                                  Container(
+                                    child: Text(
+                                      "Block",
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            ));
+                  },
+                  child: Icon(
+                    Icons.block,
+                    size: 26,
+                    color: Colors.red,
+                  ),
                 ),
                 InkWell(
-                  onTap: (){
-                    Get.to(()=>EditPerson());
+                  onTap: () {
+                    showModalBottomSheet(
+                      shape: BeveledRectangleBorder(
+                          borderRadius: BorderRadius.circular(35.r)),
+                      context: context,
+                      builder: (context) => Container(
+                        decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(35.r)),
+                        height: 100.h,
+                        width: 1.sw,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 75.w,
+                              height: 50.h,
+                              child: Center(
+                                child: Text(
+                                  "Delete",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.red,
+                                      fontSize: 18.sp),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              width: 75.w,
+                              height: 50.h,
+                              child: Center(
+                                child: Text(
+                                  "Cancel",
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black,
+                                      fontSize: 18.sp),
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    );
                   },
-                  child: Icon(Icons.edit))
+                  child: Icon(
+                    Icons.delete,
+                    color: Colors.red,
+                    size: 26,
+                  ),
+                ),
+                InkWell(
+                    onTap: () {
+                      Get.to(() => EditMember());
+                    },
+                    child: Icon(Icons.edit))
               ],
             ),
           )

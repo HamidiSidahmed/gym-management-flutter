@@ -3,8 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class PasswordPage extends StatelessWidget {
-  
-
   @override
   Widget build(BuildContext context) {
     bool visible = false;
@@ -15,14 +13,14 @@ class PasswordPage extends StatelessWidget {
       backgroundColor: Colors.black,
       body: Container(
           decoration: ShapeDecoration(
-            color: Color(0xFFD9D9D9),
+            color: const Color(0xFFD9D9D9),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(35),
-                topRight: Radius.circular(35),
+                topLeft: Radius.circular(35.r),
+                topRight: Radius.circular(35.r),
               ),
             ),
-            shadows: [
+            shadows:const [
               BoxShadow(
                 color: Color(0x7C000000),
                 blurRadius: 33,

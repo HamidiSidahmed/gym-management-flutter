@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class EditPerson extends StatelessWidget {
-  const EditPerson({super.key});
+class EditMember extends StatelessWidget {
+  const EditMember({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -71,12 +71,13 @@ class EditPerson extends StatelessWidget {
                     InkWell(
                       onTap: () {
                         showModalBottomSheet(
+                          enableDrag: true,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(35)),
                           context: context,
                           builder: (context) {
                             return Container(
-                              width: 100.w,
+                              width: 1.sw,
                               height: 125.h,
                               decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(35)),
@@ -265,7 +266,7 @@ class EditPerson extends StatelessWidget {
                               'Experation Date',
                               style: TextStyle(
                                 color: Colors.black
-                                    .withOpacity(0.7799999713897705),
+                                    .withOpacity(0.8),
                                 fontSize: 10.5.sp,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w400,
