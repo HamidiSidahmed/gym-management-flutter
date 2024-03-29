@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gym_sof/controller/data_controller.dart';
 import 'login_page.dart';
 
 class IntroPage extends StatelessWidget {
@@ -8,6 +9,7 @@ class IntroPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Data data_controller = Get.put(Data());
     return Scaffold(
         body: Stack(
       children: [

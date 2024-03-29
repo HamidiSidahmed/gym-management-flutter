@@ -2,19 +2,23 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gym_sof/controller/data_controller.dart';
+import 'package:gym_sof/model/member.dart';
 
 class AddMember extends StatelessWidget {
   const AddMember({super.key});
 
   @override
   Widget build(BuildContext context) {
+    Data data_controller = Get.find();
     TextEditingController name = TextEditingController();
     TextEditingController phone = TextEditingController();
     TextEditingController exp_day = TextEditingController();
     TextEditingController plan = TextEditingController();
     TextEditingController paid = TextEditingController();
+    DateTime end_date = DateTime.now();
     return Scaffold(
-      backgroundColor: Colors.transparent,
+        backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
         body: SingleChildScrollView(
           child: Stack(
@@ -158,8 +162,10 @@ class AddMember extends StatelessWidget {
                         margin: EdgeInsets.only(top: 20.h),
                         width: 94.w,
                         height: 94.h,
-                        child: CircleAvatar(backgroundColor: Colors.transparent,
-                        backgroundImage: AssetImage("assets/25.png"),),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.transparent,
+                          backgroundImage: AssetImage("assets/25.png"),
+                        ),
                       ),
                     ),
                     Container(
@@ -193,6 +199,9 @@ class AddMember extends StatelessWidget {
                               left: 16.5.w,
                             ),
                             child: TextField(
+                                onChanged: (value) {
+                                  print(name.text);
+                                },
                                 controller: name,
                                 style: TextStyle(fontSize: 13.5.sp),
                                 cursorColor: Colors.black,
@@ -296,8 +305,9 @@ class AddMember extends StatelessWidget {
                                                 DateTime(2023, 1, 1),
                                             minimumYear: 2023,
                                             mode: CupertinoDatePickerMode.date,
-                                            onDateTimeChanged:
-                                                (DateTime time) {}),
+                                            onDateTimeChanged: (DateTime time) {
+                                              end_date = time;
+                                            }),
                                       );
                                     },
                                   );
@@ -391,6 +401,22 @@ class AddMember extends StatelessWidget {
                       ),
                     ),
                     InkWell(
+                      onTap: () {
+                       data_controller.push_data(Member(
+                            name.text,
+                            phone.text,
+                            end_date,
+                            "",
+                            true,
+                            DateTime.now(),
+                            plan.text,
+                            paid.text,
+                            false,
+                            DateTime(2023)));
+                            data_controller.filter_data("");
+                            print(data_controller.filtered_data.length);
+                            Get.back();
+                      },
                       child: Container(
                         margin: EdgeInsets.only(top: 40.h),
                         width: 106.w,

@@ -3,13 +3,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gym_sof/controller/data_controller.dart';
+import 'package:gym_sof/model/member.dart';
 import 'package:gym_sof/view/edit_member.dart';
 
 class PersonCard extends StatelessWidget {
-  const PersonCard({super.key});
+  List<Member> member;
+  Data data_controller;
+  int index;
+  PersonCard({super.key,required this.member,required this.index,required this.data_controller});
 
   @override
   Widget build(BuildContext context) {
+ 
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
       height: 165.h,
@@ -63,7 +69,7 @@ class PersonCard extends StatelessWidget {
                     Container(
                       height: 35.h,
                       child: Text(
-                        "HAMIDI  ",
+                        member[index].name,
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 12.7.sp,
@@ -82,7 +88,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "0674239277",
+                      member[index].phone,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.5.sp,
@@ -305,16 +311,22 @@ class PersonCard extends StatelessWidget {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            SizedBox(
-                              width: 75.w,
-                              height: 50.h,
-                              child: Center(
-                                child: Text(
-                                  "Delete",
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.red,
-                                      fontSize: 18.sp),
+                            InkWell(
+                              onTap: (){
+                                data_controller.delete_data(member[index].phone);
+                                Navigator.pop(context);
+                              },
+                              child: SizedBox(
+                                width: 75.w,
+                                height: 50.h,
+                                child: Center(
+                                  child: Text(
+                                    "Delete",
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.red,
+                                        fontSize: 18.sp),
+                                  ),
                                 ),
                               ),
                             ),
