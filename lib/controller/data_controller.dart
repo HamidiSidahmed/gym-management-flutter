@@ -18,6 +18,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   List<Member> filtered_active_data = [];
   List<Member> filtered_exp_data = [];
   List<Member> filtered_blocked_data = [];
+  bool show=false;
   XFile? imagepicker;
   final limit = 5;
   int length = 0;
@@ -66,12 +67,10 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
         ? length_blocked = limit
         : length_blocked = filtered_blocked_data.length;
 
-    tab_controller.addListener(() {
-      index = tab_controller.index;
-      print(tab_controller.index);
-    });
+  
     scrollController.addListener(
       () {
+        print(scrollController.position.pixels);
         if (scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) {
           if (HomePage.index == 0) {
