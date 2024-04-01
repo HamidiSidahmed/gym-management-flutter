@@ -344,7 +344,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
       var original = File(imagepicker!.path);
       compressedfile = await FlutterImageCompress.compressAndGetFile(
           original.path, '${dir.path}${DateTime.now()}.jpg',
-          minHeight: 350, minWidth: 350, quality: 80);
+          minHeight: 400, minWidth: 400, quality: 80);
       if (compressedfile != null) {
         print("gg");
       }

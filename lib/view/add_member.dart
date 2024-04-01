@@ -23,8 +23,8 @@ class AddMember extends StatelessWidget {
     TextEditingController plan = TextEditingController();
     TextEditingController paid = TextEditingController();
     DateTime end_date = DateTime.now();
-    
-    data_controller.compressedfile=null;
+
+    data_controller.compressedfile = null;
     ImageProvider comImage() {
       if (data_controller.compressedfile == null) {
         return AssetImage("assets/25.png");
@@ -142,7 +142,7 @@ class AddMember extends StatelessWidget {
                                         await data_controller
                                             .takephoto(ImageSource.gallery);
 
-                                        data_controller.update();
+                                        await data_controller.compress();
 
                                         Navigator.pop(context);
                                       },
@@ -446,7 +446,9 @@ class AddMember extends StatelessWidget {
                             name.text,
                             phone.text,
                             end_date,
-                            data_controller.compressedfile==null?"":data_controller.compressedfile.path,
+                            data_controller.compressedfile == null
+                                ? ""
+                                : data_controller.compressedfile.path,
                             true,
                             DateTime.now(),
                             plan.text,

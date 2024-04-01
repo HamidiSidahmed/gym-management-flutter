@@ -105,6 +105,11 @@ class EditMember extends StatelessWidget {
                                         await data_controller
                                             .takephoto(ImageSource.camera);
                                         await data_controller.compress();
+                                        if (data_controller.compressedfile !=
+                                            null) {
+                                          member[index].image = data_controller
+                                              .compressedfile.path;
+                                        }
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -134,8 +139,13 @@ class EditMember extends StatelessWidget {
                                     child: InkWell(
                                       onTap: () async {
                                         await data_controller
-                                            .takephoto(ImageSource.camera);
+                                            .takephoto(ImageSource.gallery);
                                         await data_controller.compress();
+                                        if (data_controller.compressedfile !=
+                                            null) {
+                                          member[index].image = data_controller
+                                              .compressedfile.path;
+                                        }
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -444,7 +454,9 @@ class EditMember extends StatelessWidget {
                                 name.text,
                                 phone.text,
                                 end_date,
-                                data_controller.compressedfile==null?"":data_controller.compressedfile.path,
+                                data_controller.compressedfile == null
+                                    ? member[index].image
+                                    : data_controller.compressedfile.path,
                                 true,
                                 DateTime.now(),
                                 plan.text,

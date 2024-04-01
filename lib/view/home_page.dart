@@ -16,6 +16,7 @@ class HomePage extends StatelessWidget {
     Data data_controller = Get.find();
     TextEditingController filter = TextEditingController(text: "");
     List<Widget> widgets = [];
+   
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragEnd: (details) {

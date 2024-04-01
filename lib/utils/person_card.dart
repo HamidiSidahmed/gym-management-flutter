@@ -41,14 +41,26 @@ class PersonCard extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Container(
-            margin: EdgeInsets.only(left: 20.w, bottom: 5.h),
-            width: 75.w,
-            height: 75.w,
-            decoration: BoxDecoration(shape: BoxShape.circle),
-            child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                backgroundImage:data_controller.display_image(member[index].image)),
+          InkWell(
+            onTap: (){
+              showDialog(
+                
+                context: context, builder: (context) {
+                return Dialog(
+
+                  child: Container(child:Image(image: data_controller.display_image(member[index].image),fit: BoxFit.cover,) ,),
+                );
+              },);
+            },
+            child: Container(
+              margin: EdgeInsets.only(left: 20.w, bottom: 5.h),
+              width: 75.w,
+              height: 75.w,
+              decoration: BoxDecoration(shape: BoxShape.circle),
+              child: CircleAvatar(
+                  backgroundColor: Colors.transparent,
+                  backgroundImage:data_controller.display_image(member[index].image)),
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
