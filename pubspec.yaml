@@ -17,6 +17,7 @@ dependencies:
   get:
   intl:
   flutter_screenutil:
+  animations: ^2.0.11
 dev_dependencies:
   flutter_test:
     sdk: flutter

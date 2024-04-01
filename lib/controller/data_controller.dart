@@ -1,25 +1,87 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/model/member.dart';
+import 'package:gym_sof/view/home_page.dart';
 import 'package:hive/hive.dart';
 
-class Data extends GetxController {
+class Data extends GetxController with GetSingleTickerProviderStateMixin {
   late Box myBox;
   late Member member;
-  late List<Member> filtered_data;
+  List<Member> filtered_data = [];
+  List<Member> filtered_active_data = [];
+  List<Member> filtered_exp_data = [];
+  List<Member> filtered_blocked_data = [];
   final limit = 5;
   int length = 0;
+  int index = 0;
+  int length_active = 0;
+  int length_exp = 0;
+  int length_blocked = 0;
+
   int count = 0;
+
+  late TabController tab_controller;
+  ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
-    filtered_data = [];
+    tab_controller = TabController(length: 4, vsync: this);
     myBox = await Hive.openBox<Member>("MemberBox");
     filtered_data = myBox.values.toList().cast<Member>();
-    if (myBox.length > limit) {
-      length = 5;
-    } else {
-      length = myBox.length;
-    }
+    filtered_active_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == false &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_exp_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == true &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_blocked_data = myBox.values
+        .where((element) => element.blocked == true)
+        .toList()
+        .cast<Member>();
+
+    myBox.length > limit ? length = limit : length = myBox.length;
+
+    filtered_active_data.length > limit
+        ? length_active = limit
+        : length_active = filtered_active_data.length;
+
+    filtered_exp_data.length > limit
+        ? length_exp = limit
+        : length_exp = filtered_exp_data.length;
+
+    filtered_blocked_data.length > limit
+        ? length_blocked = limit
+        : length_blocked = filtered_blocked_data.length;
+
+    tab_controller.addListener(() {
+      index = tab_controller.index;
+      print(tab_controller.index);
+    });
+    scrollController.addListener(
+      () {
+        if (scrollController.position.pixels ==
+            scrollController.position.maxScrollExtent) {
+          if (HomePage.index == 0) {
+            length = update_lenght(filtered_data.length, length);
+          } else if (HomePage.index == 1) {
+            length_active =
+                update_lenght(filtered_active_data.length, length_active);
+          } else if (HomePage.index == 2) {
+            length_exp = update_lenght(filtered_exp_data.length, length_exp);
+          } else {
+            length_blocked =
+                update_lenght(filtered_blocked_data.length, length_blocked);
+          }
+        }
+      },
+    );
     print(length);
     super.onInit();
   }
@@ -27,16 +89,48 @@ class Data extends GetxController {
   @override
   void onClose() {
     myBox.close();
+    scrollController.removeListener(() {});
+    tab_controller.removeListener(() {});
     super.onClose();
   }
 
-  void push_data(Member added_member) async {
+  Future<void> push_data(Member added_member) async {
     try {
       await myBox.put(added_member.phone, added_member);
       filtered_data = myBox.values.toList().cast<Member>();
+      filtered_active_data = myBox.values
+          .where((element) =>
+              DateTime.now().isAfter(element.end_date) == false &&
+              element.blocked == false)
+          .toList()
+          .cast<Member>();
+      filtered_exp_data = myBox.values
+          .where((element) =>
+              DateTime.now().isAfter(element.end_date) == true &&
+              element.blocked == false)
+          .toList()
+          .cast<Member>();
+      filtered_blocked_data = myBox.values
+          .where((element) => element.blocked == true)
+          .toList()
+          .cast<Member>();
       if (kDebugMode) {
         print('added sucssefully');
       }
+      myBox.length > limit ? length = limit : length = myBox.length;
+
+      filtered_active_data.length > limit
+          ? length_active = limit
+          : length_active = filtered_active_data.length;
+
+      filtered_exp_data.length > limit
+          ? length_exp = limit
+          : length_exp = filtered_exp_data.length;
+
+      filtered_blocked_data.length > limit
+          ? length_blocked = limit
+          : length_blocked = filtered_blocked_data.length;
+
       update();
     } catch (e) {
       if (kDebugMode) {
@@ -49,25 +143,121 @@ class Data extends GetxController {
     return await myBox.getAt(index);
   }
 
-  void delete_data(String phone) async {
-    await myBox.delete(phone);
+  Future<void> delete_data(String phone) async {
+    int place = 0;
+    place = await places(phone);
+    await myBox.deleteAt(place);
     filtered_data.removeWhere((element) => element.phone == phone);
+    filtered_active_data.removeWhere((element) => element.phone == phone);
+    filtered_exp_data.removeWhere((element) => element.phone == phone);
+    filtered_blocked_data.removeWhere((element) => element.phone == phone);
+
     filtered_data.length > length
         ? length = limit
         : length = filtered_data.length;
+
+    filtered_active_data.length > length_active
+        ? length_active = limit
+        : length_active = filtered_active_data.length;
+
+    filtered_exp_data.length > length_exp
+        ? length_exp = limit
+        : length_exp = filtered_exp_data.length;
+
+    filtered_blocked_data.length > length_blocked
+        ? length_blocked = limit
+        : length_blocked = filtered_blocked_data.length;
     update();
   }
 
-  void update_lenght() {
-    if (length >= filtered_data.length) {
-      length = filtered_data.length;
-    } else if (length + 5 >= filtered_data.length) {
-      length = filtered_data.length;
-    } else {
-      length += 5;
+  Future<void> block_member(Member blocked_member, String phone) async {
+    try {
+      int place = 0;
+      place = await places(phone);
+      await myBox.putAt(place, blocked_member);
+      filter_data(HomePage.filters);
+      filtered_active_data = myBox.values
+          .where((element) =>
+              DateTime.now().isAfter(element.end_date) == false &&
+              element.blocked == false)
+          .toList()
+          .cast<Member>();
+      filtered_exp_data = myBox.values
+          .where((element) =>
+              DateTime.now().isAfter(element.end_date) == true &&
+              element.blocked == false)
+          .toList()
+          .cast<Member>();
+      filtered_blocked_data = myBox.values
+          .where((element) => element.blocked == true)
+          .toList()
+          .cast<Member>();
+
+      filtered_data.length > length
+          ? length = limit
+          : length = filtered_data.length;
+
+      filtered_active_data.length > length_active
+          ? length_active = limit
+          : length_active = filtered_active_data.length;
+
+      filtered_exp_data.length > length_exp
+          ? length_exp = limit
+          : length_exp = filtered_exp_data.length;
+
+      filtered_blocked_data.length > length_blocked
+          ? length_blocked = limit
+          : length_blocked = filtered_blocked_data.length;
+      if (kDebugMode) {
+        print('added sucssefully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('debug: $e');
+      }
     }
-    print(length);
     update();
+  }
+
+  Future<void> update_member(Member member, String phone) async {
+    int place = 0;
+    place = await places(phone);
+  await  myBox.putAt(place, member);
+    filter_data(HomePage.filters);
+    filtered_active_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == false &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_exp_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == true &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_blocked_data = myBox.values
+        .where((element) => element.blocked == true)
+        .toList()
+        .cast<Member>();
+    update_lenght(filtered_data.length, length);
+    update_lenght(filtered_active_data.length, length_active);
+    update_lenght(filtered_exp_data.length, length_exp);
+    update_lenght(filtered_blocked_data.length, length_blocked);
+    update();
+  }
+
+  int update_lenght(int list_length, int updated_length) {
+    if (updated_length >= list_length) {
+      updated_length = list_length;
+    } else if (updated_length + 5 >= list_length) {
+      updated_length = list_length;
+    } else {
+      updated_length += 5;
+    }
+    print(updated_length);
+    update();
+    return updated_length;
   }
 
   void filter_data(String filter) {
@@ -88,5 +278,17 @@ class Data extends GetxController {
     }
 
     update();
+  }
+
+  Future<int> places(String phone) async {
+    int current = 0;
+
+    for (int i = 0; i < myBox.length; i++) {
+      if (myBox.getAt(i).phone == phone) {
+        current = i;
+        break;
+      }
+    }
+    return current;
   }
 }

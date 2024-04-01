@@ -7,24 +7,25 @@ import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/utils/person_card.dart';
 import 'package:gym_sof/view/add_member.dart';
 import 'package:intl/intl.dart';
+import 'package:animations/animations.dart';
 
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
-
+  static int index = 0;
+  static String filters="";
   @override
   Widget build(BuildContext context) {
     Data data_controller = Get.find();
     TextEditingController filter = TextEditingController(text: "");
+    List<Widget> widgets = [];
     return Scaffold(
       body: DefaultTabController(
         length: 4,
         child: SingleChildScrollView(
+          controller: data_controller.scrollController,
           child: Column(
             children: [
               InkWell(
-                onTap: () {
-                  data_controller.update_lenght();
-                },
+                onTap: () {},
                 child: Container(
                     width: 1.sw,
                     height: 280.h,
@@ -117,6 +118,7 @@ class HomePage extends StatelessWidget {
                                   cursorColor: Color(0xFFD9D9D9),
                                   controller: filter,
                                   onChanged: (value) {
+                                    filters=value;
                                     data_controller.filter_data(filter.text);
                                   },
                                   cursorOpacityAnimates: true,
@@ -151,9 +153,15 @@ class HomePage extends StatelessWidget {
                                     EdgeInsets.only(left: 10.w, bottom: 4.h),
                                 child: InkWell(
                                   onTap: () {
-                                    data_controller.length = 5;
+                                    if (data_controller.filtered_data.length <
+                                        5) {
+                                      data_controller.length =
+                                          data_controller.filtered_data.length;
+                                    } else {
+                                      data_controller.length = 5;
+                                    }
                                     data_controller.update();
-                                    Get.to(() => AddMember());
+                                    Get.to(() => AddMember(),transition: Transition.upToDown,duration: Duration(milliseconds: 150));
                                   },
                                   child: Icon(
                                     Icons.person_add,
@@ -167,6 +175,31 @@ class HomePage extends StatelessWidget {
                           SizedBox(
                             width: 1.sh,
                             child: TabBar(
+                                onTap: (value) {
+                                  index = value;
+                                  data_controller.filtered_data.length > 5
+                                      ? data_controller.length = 5
+                                      : data_controller.length =
+                                          data_controller.filtered_data.length;
+                                  data_controller.filtered_active_data.length >
+                                          5
+                                      ? data_controller.length = 5
+                                      : data_controller.length_active =
+                                          data_controller
+                                              .filtered_active_data.length;
+                                  data_controller.filtered_exp_data.length > 5
+                                      ? data_controller.length_exp = 5
+                                      : data_controller.length_exp =
+                                          data_controller
+                                              .filtered_exp_data.length;
+                                  data_controller.filtered_blocked_data.length >
+                                          5
+                                      ? data_controller.length_blocked = 5
+                                      : data_controller.length_blocked =
+                                          data_controller
+                                              .filtered_blocked_data.length;
+                                  data_controller.update();
+                                },
                                 indicatorPadding: EdgeInsets.only(bottom: 10),
                                 dividerHeight: 0,
                                 indicatorColor: Color(0xFFD9D9D9),
@@ -177,8 +210,8 @@ class HomePage extends StatelessWidget {
                                     color: Color(
                                       0xFFD9D9D9,
                                     ),
-                                    fontSize: 14.5),
-                                tabs: [
+                                    fontSize: 14.5.sp),
+                                tabs: const [
                                   Tab(
                                     text: "All",
                                   ),
@@ -196,13 +229,21 @@ class HomePage extends StatelessWidget {
                         ])),
               ),
               GetBuilder<Data>(builder: (context) {
-                return SizedBox(
-                  height: (182 * data_controller.length).toDouble(),
+                return Container(
+                  height: index == 0
+                      ? (190.h * data_controller.length).toDouble()
+                      : index == 1
+                          ? (190.h * data_controller.length_active).toDouble()
+                          : index == 2
+                              ? (190.h * data_controller.length_exp).toDouble()
+                              : (190.h * data_controller.length_blocked)
+                                  .toDouble(),
                   width: 1.sw,
                   child: TabBarView(
+                    physics: NeverScrollableScrollPhysics(),
                     children: [
                       ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
+                        physics:const NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.only(
                             top: 15.h, left: 25, right: 25, bottom: 20),
                         itemCount: data_controller.length,
@@ -218,43 +259,34 @@ class HomePage extends StatelessWidget {
                         physics: NeverScrollableScrollPhysics(),
                         padding: EdgeInsets.only(
                             top: 10.h, left: 25, right: 25, bottom: 20),
-                        itemCount: data_controller.length,
-                        itemBuilder: (context, index) {
-                          if (data_controller.filtered_data[index].start_date
-                              .isAfter(data_controller
-                                  .filtered_data[index].end_date)) {
-                            return PersonCard(
-                                member: data_controller.filtered_data,
-                                index: index,
-                                data_controller: data_controller);
-                          }
-                        },
-                      ),
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.only(
-                            top: 10.h, left: 25, right: 25, bottom: 20),
-                        itemCount: data_controller.length,
-                        itemBuilder: (context, index) {
-                          if (data_controller.filtered_data[index].start_date
-                                  .isAfter(data_controller
-                                      .filtered_data[index].end_date) ==
-                              false) {
-                            return PersonCard(
-                                member: data_controller.filtered_data,
-                                index: index,
-                                data_controller: data_controller);
-                          }
-                        },
-                      ),
-                      ListView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        padding: EdgeInsets.only(
-                            top: 10.h, left: 25, right: 25, bottom: 20),
-                        itemCount: data_controller.length,
+                        itemCount: data_controller.length_active,
                         itemBuilder: (context, index) {
                           return PersonCard(
-                              member: data_controller.filtered_data,
+                              member: data_controller.filtered_active_data,
+                              index: index,
+                              data_controller: data_controller);
+                        },
+                      ),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                            top: 10.h, left: 25, right: 25, bottom: 20),
+                        itemCount: data_controller.length_exp,
+                        itemBuilder: (context, index) {
+                          return PersonCard(
+                              member: data_controller.filtered_exp_data,
+                              index: index,
+                              data_controller: data_controller);
+                        },
+                      ),
+                      ListView.builder(
+                        physics: NeverScrollableScrollPhysics(),
+                        padding: EdgeInsets.only(
+                            top: 10.h, left: 25, right: 25, bottom: 20),
+                        itemCount: data_controller.length_blocked,
+                        itemBuilder: (context, index) {
+                          return PersonCard(
+                              member: data_controller.filtered_blocked_data,
                               index: index,
                               data_controller: data_controller);
                         },

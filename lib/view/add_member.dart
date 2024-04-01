@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
-
+import 'package:intl/intl.dart';
 class AddMember extends StatelessWidget {
   const AddMember({super.key});
 
@@ -278,43 +278,55 @@ class AddMember extends StatelessWidget {
                               ),
                             ),
                           ),
-                          Container(
-                            margin: EdgeInsets.only(
-                              left: 16.5.w,
-                              top: 17.h,
-                            ),
-                            child:
-                                Text("", style: TextStyle(fontSize: 13.5.sp)),
-                          ),
+                        
                           Container(
                             margin: EdgeInsets.only(right: 10.w),
                             alignment: Alignment.centerRight,
-                            child: InkWell(
-                                onTap: () {
-                                  showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (context) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(35)),
-                                        height: 175.h,
-                                        child: CupertinoDatePicker(
-                                            initialDateTime:
-                                                DateTime(2023, 1, 1),
-                                            minimumYear: 2023,
-                                            mode: CupertinoDatePickerMode.date,
-                                            onDateTimeChanged: (DateTime time) {
-                                              end_date = time;
-                                            }),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GetBuilder<Data>(
+                                  builder: (context) {
+                                    return Container(
+                                      width: 100.w,
+                                      margin: EdgeInsets.only(left: 15.w,top: 10.h,right: 90.w),
+                                      child: Text(DateFormat.yMd().format(end_date),style: TextStyle(fontSize: 13.5.sp),),);
+                                  }
+                                ),
+                                InkWell(
+                                    onTap: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(35)),
+                                            height: 175.h,
+                                            child: CupertinoDatePicker(
+                                                initialDateTime:
+                                                    DateTime(2023, 1, 1),
+                                                minimumYear: 2023,
+                                                mode: CupertinoDatePickerMode
+                                                    .date,
+                                                onDateTimeChanged:
+                                                    (DateTime time) {
+                                                  end_date = time;
+                                                  data_controller.update();
+                                                }),
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                child: Container(
-                                    width: 20.w,
-                                    child: Image.asset("assets/calendar.png"))),
+                                    child: Container(
+                                      margin: EdgeInsets.only(top: 4.h,left: 8.w),
+
+                                        width: 20.w,
+                                        child: Image.asset(
+                                            "assets/calendar.png"))),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -401,8 +413,8 @@ class AddMember extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () {
-                       data_controller.push_data(Member(
+                      onTap: () async{
+                      await data_controller.push_data(Member(
                             name.text,
                             phone.text,
                             end_date,
@@ -413,9 +425,8 @@ class AddMember extends StatelessWidget {
                             paid.text,
                             false,
                             DateTime(2023)));
-                            data_controller.filter_data("");
-                            print(data_controller.filtered_data.length);
-                            Get.back();
+                        data_controller.filter_data("");
+                        Get.back();
                       },
                       child: Container(
                         margin: EdgeInsets.only(top: 40.h),

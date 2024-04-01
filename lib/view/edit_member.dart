@@ -2,17 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:gym_sof/controller/data_controller.dart';
+import 'package:gym_sof/model/member.dart';
+import 'package:intl/intl.dart';
 
 class EditMember extends StatelessWidget {
-  const EditMember({super.key});
+  List<Member> member;
+  int index;
+  EditMember({super.key, required this.member, required this.index});
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController name = TextEditingController();
-    TextEditingController phone = TextEditingController();
-    TextEditingController exp_day = TextEditingController();
-    TextEditingController plan = TextEditingController();
-    TextEditingController paid = TextEditingController();
+    TextEditingController name =
+        TextEditingController(text: member[index].name);
+    TextEditingController phone =
+        TextEditingController(text: member[index].phone);
+    TextEditingController plan =
+        TextEditingController(text: member[index].plan);
+    TextEditingController paid =
+        TextEditingController(text: member[index].paid);
+    DateTime end_date = member[index].end_date;
+    Data data_controller = Get.find();
+    String intial_phone=member[index].phone;
     return Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
@@ -265,8 +276,7 @@ class EditMember extends StatelessWidget {
                             child: Text(
                               'Experation Date',
                               style: TextStyle(
-                                color: Colors.black
-                                    .withOpacity(0.8),
+                                color: Colors.black.withOpacity(0.8),
                                 fontSize: 10.5.sp,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.w400,
@@ -284,31 +294,54 @@ class EditMember extends StatelessWidget {
                           Container(
                             margin: EdgeInsets.only(right: 10.w),
                             alignment: Alignment.centerRight,
-                            child: InkWell(
-                                onTap: () {
-                                  showCupertinoModalPopup(
-                                    context: context,
-                                    builder: (context) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(35)),
-                                        height: 175.h,
-                                        child: CupertinoDatePicker(
-                                            initialDateTime:
-                                                DateTime(2023, 1, 1),
-                                            minimumYear: 2023,
-                                            mode: CupertinoDatePickerMode.date,
-                                            onDateTimeChanged:
-                                                (DateTime time) {}),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                GetBuilder<Data>(builder: (context) {
+                                  return Container(
+                                    width: 100.w,
+                                    margin: EdgeInsets.only(
+                                        left: 15.w, top: 10.h, right: 90.w),
+                                    child: Text(
+                                      DateFormat.yMd().format(end_date),
+                                      style: TextStyle(fontSize: 13.5.sp),
+                                    ),
+                                  );
+                                }),
+                                InkWell(
+                                    onTap: () {
+                                      showCupertinoModalPopup(
+                                        context: context,
+                                        builder: (context) {
+                                          return Container(
+                                            decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(35)),
+                                            height: 175.h,
+                                            child: CupertinoDatePicker(
+                                                initialDateTime:
+                                                    DateTime(2023, 1, 1),
+                                                minimumYear: 2023,
+                                                mode: CupertinoDatePickerMode
+                                                    .date,
+                                                onDateTimeChanged:
+                                                    (DateTime time) {
+                                                  end_date = time;
+                                                  data_controller.update();
+                                                }),
+                                          );
+                                        },
                                       );
                                     },
-                                  );
-                                },
-                                child: Container(
-                                    width: 20.w,
-                                    child: Image.asset("assets/calendar.png"))),
+                                    child: Container(
+                                        margin: EdgeInsets.only(
+                                            top: 4.h, left: 8.w),
+                                        width: 20.w,
+                                        child: Image.asset(
+                                            "assets/calendar.png"))),
+                              ],
+                            ),
                           )
                         ],
                       ),
@@ -395,6 +428,20 @@ class EditMember extends StatelessWidget {
                       ),
                     ),
                     InkWell(
+                      onTap: () {
+                        data_controller.update_member(Member(
+                            name.text,
+                            phone.text,
+                            end_date,
+                            "",
+                            true,
+                            DateTime.now(),
+                            plan.text,
+                            paid.text,
+                            member[index].blocked,
+                            member[index].blocked_date),intial_phone);
+                        Get.back();
+                      },
                       child: Container(
                         margin: EdgeInsets.only(top: 40.h),
                         width: 106.w,

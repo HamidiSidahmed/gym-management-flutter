@@ -1,21 +1,25 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
 import 'package:gym_sof/view/edit_member.dart';
+import 'package:intl/intl.dart';
 
 class PersonCard extends StatelessWidget {
   List<Member> member;
   Data data_controller;
   int index;
-  PersonCard({super.key,required this.member,required this.index,required this.data_controller});
+  PersonCard(
+      {super.key,
+      required this.member,
+      required this.index,
+      required this.data_controller});
 
   @override
   Widget build(BuildContext context) {
- 
+    DateTime bloked_date = DateTime.now();
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
       height: 165.h,
@@ -24,8 +28,8 @@ class PersonCard extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(23),
         ),
-        shadows: [
-          const BoxShadow(
+        shadows: const [
+          BoxShadow(
             color: Color(0x3F000000),
             blurRadius: 4,
             offset: Offset(0, 0),
@@ -79,7 +83,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      'Phone:',
+                      "Phone",
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 13.5.sp,
@@ -109,7 +113,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "1500 DA",
+                      member[index].plan,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.5.sp,
@@ -147,9 +151,20 @@ class PersonCard extends StatelessWidget {
                     Container(
                       height: 35.h,
                       child: Text(
-                        "Active",
+                        member[index].blocked == true
+                            ? "Blocked"
+                            : DateTime.now().isAfter(member[index].end_date) ==
+                                    false
+                                ? "Active"
+                                : "Expired",
                         style: TextStyle(
-                          color: Colors.green,
+                          color: member[index].blocked == true
+                              ? Colors.red
+                              : DateTime.now()
+                                          .isAfter(member[index].end_date) ==
+                                      false
+                                  ? Colors.green
+                                  : Colors.grey[600],
                           fontSize: 12.7.sp,
                           fontFamily: 'Helvetica',
                           fontWeight: FontWeight.w400,
@@ -166,7 +181,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "05/12/2023",
+                      DateFormat.yMd().format(member[index].end_date),
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.5.sp,
@@ -187,7 +202,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      "1500 DA",
+                      member[index].paid,
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.5.sp,
@@ -232,13 +247,16 @@ class PersonCard extends StatelessWidget {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        Container(
-                                          margin: EdgeInsets.only(left: 20.w),
-                                          child: Text(
-                                            "25/09/2002",
-                                            style: TextStyle(fontSize: 14.sp),
-                                          ),
-                                        ),
+                                        GetBuilder<Data>(builder: (context) {
+                                          return Container(
+                                            margin: EdgeInsets.only(left: 20.w),
+                                            child: Text(
+                                              DateFormat.yMd().format(
+                                                  member[index].blocked_date),
+                                              style: TextStyle(fontSize: 14.sp),
+                                            ),
+                                          );
+                                        }),
                                         InkWell(
                                           onTap: () {
                                             showCupertinoModalPopup(
@@ -259,7 +277,13 @@ class PersonCard extends StatelessWidget {
                                                           CupertinoDatePickerMode
                                                               .date,
                                                       onDateTimeChanged:
-                                                          (DateTime time) {}),
+                                                          (DateTime time) {
+                                                        member[index]
+                                                                .blocked_date =
+                                                            time;
+                                                        data_controller
+                                                            .update();
+                                                      }),
                                                 );
                                               },
                                             );
@@ -278,12 +302,38 @@ class PersonCard extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  Container(
-                                    child: Text(
-                                      "Block",
-                                      style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold),
+                                  InkWell(
+                                    onTap: () async{
+                                     await data_controller.block_member(
+                                          Member(
+                                              member[index].name,
+                                              member[index].phone,
+                                              member[index].end_date,
+                                              "",
+                                              false,
+                                              member[index].start_date,
+                                              member[index].plan,
+                                              member[index].plan,
+                                              !member[index].blocked,
+                                              member[index].blocked_date),
+                                          member[index].phone);
+                                      Navigator.pop(context);
+                                      print(member[index].blocked);
+                                    },
+                                    child: Container(
+                                      color: Colors.amber,
+                                      child: Text(
+                                        member[index].blocked == false
+                                            ? "Block"
+                                            : "Unblock",
+                                        style: TextStyle(
+                                            color:
+                                                member[index].blocked == false
+                                                    ? Colors.red
+                                                    : Colors.black,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.bold),
+                                      ),
                                     ),
                                   )
                                 ],
@@ -292,7 +342,7 @@ class PersonCard extends StatelessWidget {
                   },
                   child: Icon(
                     Icons.block,
-                    size: 26,
+                    size: 26.r,
                     color: Colors.red,
                   ),
                 ),
@@ -312,8 +362,11 @@ class PersonCard extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
                             InkWell(
-                              onTap: (){
-                                data_controller.delete_data(member[index].phone);
+                              onTap: () {
+                                print(member[index].phone);
+
+                                data_controller
+                                    .delete_data(member[index].phone);
                                 Navigator.pop(context);
                               },
                               child: SizedBox(
@@ -356,7 +409,13 @@ class PersonCard extends StatelessWidget {
                 ),
                 InkWell(
                     onTap: () {
-                      Get.to(() => EditMember());
+                      Get.to(
+                          () => EditMember(
+                                member: member,
+                                index: index,
+                              ),
+                          transition: Transition.upToDown,
+                          duration: Duration(milliseconds: 150));
                     },
                     child: Icon(Icons.edit))
               ],
