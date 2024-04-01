@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class EditMember extends StatelessWidget {
@@ -23,7 +24,7 @@ class EditMember extends StatelessWidget {
         TextEditingController(text: member[index].paid);
     DateTime end_date = member[index].end_date;
     Data data_controller = Get.find();
-    String intial_phone=member[index].phone;
+    String intial_phone = member[index].phone;
     return Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
@@ -101,6 +102,9 @@ class EditMember extends StatelessWidget {
                                     height: 50.h,
                                     child: InkWell(
                                       onTap: () async {
+                                        await data_controller
+                                            .takephoto(ImageSource.camera);
+                                        await data_controller.compress();
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -129,6 +133,9 @@ class EditMember extends StatelessWidget {
                                     height: 30.h,
                                     child: InkWell(
                                       onTap: () async {
+                                        await data_controller
+                                            .takephoto(ImageSource.camera);
+                                        await data_controller.compress();
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -167,19 +174,18 @@ class EditMember extends StatelessWidget {
                           },
                         );
                       },
-                      child: GetBuilder<Data>(
-                        builder: (context) {
-                          return Container(
-                            margin: EdgeInsets.only(top: 20.h),
-                            width: 94.w,
-                            height: 94.h,
-                            child: CircleAvatar(
-                              backgroundImage: data_controller.display_image(member[index].image),
-                              backgroundColor: Colors.transparent,
-                            ),
-                          );
-                        }
-                      ),
+                      child: GetBuilder<Data>(builder: (context) {
+                        return Container(
+                          margin: EdgeInsets.only(top: 20.h),
+                          width: 94.w,
+                          height: 94.h,
+                          child: CircleAvatar(
+                            backgroundImage: data_controller
+                                .display_image(member[index].image),
+                            backgroundColor: Colors.transparent,
+                          ),
+                        );
+                      }),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 15.h),
@@ -433,17 +439,19 @@ class EditMember extends StatelessWidget {
                     ),
                     InkWell(
                       onTap: () {
-                        data_controller.update_member(Member(
-                            name.text,
-                            phone.text,
-                            end_date,
-                            "",
-                            true,
-                            DateTime.now(),
-                            plan.text,
-                            paid.text,
-                            member[index].blocked,
-                            member[index].blocked_date),intial_phone);
+                        data_controller.update_member(
+                            Member(
+                                name.text,
+                                phone.text,
+                                end_date,
+                                data_controller.compressedfile==null?"":data_controller.compressedfile.path,
+                                true,
+                                DateTime.now(),
+                                plan.text,
+                                paid.text,
+                                member[index].blocked,
+                                member[index].blocked_date),
+                            intial_phone);
                         Get.back();
                       },
                       child: Container(

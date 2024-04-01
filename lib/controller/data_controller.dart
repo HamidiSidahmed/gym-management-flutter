@@ -152,6 +152,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   Future<void> delete_data(String phone) async {
     int place = 0;
     place = await places(phone);
+   await deleteFile(myBox.getAt(index).image);
     await myBox.deleteAt(place);
     filtered_data.removeWhere((element) => element.phone == phone);
     filtered_active_data.removeWhere((element) => element.phone == phone);
@@ -358,4 +359,17 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
     else {return FileImage(File(path!));
     }
   }
+ Future<void> deleteFile(String filePath)async {
+  try {
+    File file = File(filePath);
+    if (file.existsSync()) {
+      file.deleteSync();
+      print('File deleted successfully.');
+    } else {
+      print('File does not exist at the specified path.');
+    }
+  } catch (e) {
+    print('Error deleting file: $e');
+  }
+}
 }
