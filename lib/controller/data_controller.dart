@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,9 @@ import 'package:get/get.dart';
 import 'package:gym_sof/model/member.dart';
 import 'package:gym_sof/view/home_page.dart';
 import 'package:hive/hive.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 class Data extends GetxController with GetSingleTickerProviderStateMixin {
   late Box myBox;
@@ -13,13 +18,14 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   List<Member> filtered_active_data = [];
   List<Member> filtered_exp_data = [];
   List<Member> filtered_blocked_data = [];
+  XFile? imagepicker;
   final limit = 5;
   int length = 0;
   int index = 0;
   int length_active = 0;
   int length_exp = 0;
   int length_blocked = 0;
-
+  var compressedfile;
   int count = 0;
 
   late TabController tab_controller;
@@ -196,18 +202,18 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
       filtered_data.length > length
           ? length = limit
           : length = filtered_data.length;
-
-      filtered_active_data.length > length_active
+      filtered_active_data.length > limit
           ? length_active = limit
           : length_active = filtered_active_data.length;
 
-      filtered_exp_data.length > length_exp
+      filtered_exp_data.length > limit
           ? length_exp = limit
           : length_exp = filtered_exp_data.length;
 
-      filtered_blocked_data.length > length_blocked
+      filtered_blocked_data.length > limit
           ? length_blocked = limit
           : length_blocked = filtered_blocked_data.length;
+
       if (kDebugMode) {
         print('added sucssefully');
       }
@@ -222,7 +228,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   Future<void> update_member(Member member, String phone) async {
     int place = 0;
     place = await places(phone);
-  await  myBox.putAt(place, member);
+    await myBox.putAt(place, member);
     filter_data(HomePage.filters);
     filtered_active_data = myBox.values
         .where((element) =>
@@ -240,10 +246,21 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
         .where((element) => element.blocked == true)
         .toList()
         .cast<Member>();
-    update_lenght(filtered_data.length, length);
-    update_lenght(filtered_active_data.length, length_active);
-    update_lenght(filtered_exp_data.length, length_exp);
-    update_lenght(filtered_blocked_data.length, length_blocked);
+
+    filtered_data.length > length
+        ? length = limit
+        : length = filtered_data.length;
+    filtered_active_data.length > limit
+        ? length_active = limit
+        : length_active = filtered_active_data.length;
+
+    filtered_exp_data.length > limit
+        ? length_exp = limit
+        : length_exp = filtered_exp_data.length;
+
+    filtered_blocked_data.length > limit
+        ? length_blocked = limit
+        : length_blocked = filtered_blocked_data.length;
     update();
   }
 
@@ -290,5 +307,55 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
       }
     }
     return current;
+  }
+
+  Future takephoto(ImageSource source) async {
+    try {
+      imagepicker = await ImagePicker().pickImage(source: source);
+    } catch (e) {
+      print(e);
+    }
+    update();
+  }
+
+  Future compress_image() async {
+    var result = await FlutterImageCompress.compressWithFile(
+      File(imagepicker!.path).absolute.path,
+      minWidth: 2300,
+      minHeight: 1500,
+      quality: 94,
+      rotate: 90,
+    );
+    return result;
+  }
+  Future<Directory> _getDirectory() async {
+      //This is the name of the folder where the backup is stored
+      Directory? newDirectory = await getExternalStorageDirectory();
+      if (await newDirectory!.exists() == false) {
+        return newDirectory.create(recursive: true);
+      }
+      return newDirectory;
+    }
+  Future compress() async {
+    Directory dir = await _getDirectory();
+    if (imagepicker == null) {
+      return null;
+    } else {
+      var original = File(imagepicker!.path);
+      compressedfile = await FlutterImageCompress.compressAndGetFile(
+          original.path, '${dir.path}${DateTime.now()}.jpg',
+          minHeight: 350, minWidth: 350, quality: 80);
+      if (compressedfile != null) {
+        print("gg");
+      }
+    }
+    update();
+  }
+  ImageProvider display_image(String? path){
+    if(path==""){
+      return const AssetImage("assets/25.png");
+    }
+    else {return FileImage(File(path!));
+    }
   }
 }

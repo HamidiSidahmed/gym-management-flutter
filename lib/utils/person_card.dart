@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -46,7 +48,7 @@ class PersonCard extends StatelessWidget {
             decoration: BoxDecoration(shape: BoxShape.circle),
             child: CircleAvatar(
                 backgroundColor: Colors.transparent,
-                backgroundImage: AssetImage("assets/25.png")),
+                backgroundImage:data_controller.display_image(member[index].image)),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,

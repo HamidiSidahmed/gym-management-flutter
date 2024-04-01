@@ -9,10 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_image_compress:
+  flutter_image_compress: ^2.2.0
   hive: 
   hive_flutter: 
-  image_picker: 
+  image_picker: ^1.0.7 
   permission_handler:
   get:
   intl:

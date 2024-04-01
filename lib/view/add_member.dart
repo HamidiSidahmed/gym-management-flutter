@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+
 class AddMember extends StatelessWidget {
   const AddMember({super.key});
 
@@ -17,6 +23,16 @@ class AddMember extends StatelessWidget {
     TextEditingController plan = TextEditingController();
     TextEditingController paid = TextEditingController();
     DateTime end_date = DateTime.now();
+    
+    data_controller.compressedfile=null;
+    ImageProvider comImage() {
+      if (data_controller.compressedfile == null) {
+        return AssetImage("assets/25.png");
+      } else {
+        return FileImage(File(data_controller.compressedfile.path));
+      }
+    }
+
     return Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
@@ -90,6 +106,9 @@ class AddMember extends StatelessWidget {
                                     height: 50.h,
                                     child: InkWell(
                                       onTap: () async {
+                                        await data_controller
+                                            .takephoto(ImageSource.camera);
+                                        await data_controller.compress();
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -120,6 +139,11 @@ class AddMember extends StatelessWidget {
                                     height: 30.h,
                                     child: InkWell(
                                       onTap: () async {
+                                        await data_controller
+                                            .takephoto(ImageSource.gallery);
+
+                                        data_controller.update();
+
                                         Navigator.pop(context);
                                       },
                                       child: Row(
@@ -158,15 +182,17 @@ class AddMember extends StatelessWidget {
                           },
                         );
                       },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20.h),
-                        width: 94.w,
-                        height: 94.h,
-                        child: CircleAvatar(
-                          backgroundColor: Colors.transparent,
-                          backgroundImage: AssetImage("assets/25.png"),
-                        ),
-                      ),
+                      child: GetBuilder<Data>(builder: (context) {
+                        return Container(
+                          margin: EdgeInsets.only(top: 20.h),
+                          width: 94.w,
+                          height: 94.h,
+                          child: CircleAvatar(
+                            backgroundColor: Colors.transparent,
+                            backgroundImage: comImage(),
+                          ),
+                        );
+                      }),
                     ),
                     Container(
                       margin: EdgeInsets.only(top: 15.h),
@@ -278,21 +304,23 @@ class AddMember extends StatelessWidget {
                               ),
                             ),
                           ),
-                        
                           Container(
                             margin: EdgeInsets.only(right: 10.w),
                             alignment: Alignment.centerRight,
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                GetBuilder<Data>(
-                                  builder: (context) {
-                                    return Container(
-                                      width: 100.w,
-                                      margin: EdgeInsets.only(left: 15.w,top: 10.h,right: 90.w),
-                                      child: Text(DateFormat.yMd().format(end_date),style: TextStyle(fontSize: 13.5.sp),),);
-                                  }
-                                ),
+                                GetBuilder<Data>(builder: (context) {
+                                  return Container(
+                                    width: 100.w,
+                                    margin: EdgeInsets.only(
+                                        left: 15.w, top: 10.h, right: 90.w),
+                                    child: Text(
+                                      DateFormat.yMd().format(end_date),
+                                      style: TextStyle(fontSize: 13.5.sp),
+                                    ),
+                                  );
+                                }),
                                 InkWell(
                                     onTap: () {
                                       showCupertinoModalPopup(
@@ -320,8 +348,8 @@ class AddMember extends StatelessWidget {
                                       );
                                     },
                                     child: Container(
-                                      margin: EdgeInsets.only(top: 4.h,left: 8.w),
-
+                                        margin: EdgeInsets.only(
+                                            top: 4.h, left: 8.w),
                                         width: 20.w,
                                         child: Image.asset(
                                             "assets/calendar.png"))),
@@ -413,12 +441,12 @@ class AddMember extends StatelessWidget {
                       ),
                     ),
                     InkWell(
-                      onTap: () async{
-                      await data_controller.push_data(Member(
+                      onTap: () async {
+                        await data_controller.push_data(Member(
                             name.text,
                             phone.text,
                             end_date,
-                            "",
+                            data_controller.compressedfile==null?"":data_controller.compressedfile.path,
                             true,
                             DateTime.now(),
                             plan.text,

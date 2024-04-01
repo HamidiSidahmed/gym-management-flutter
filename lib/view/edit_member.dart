@@ -167,14 +167,18 @@ class EditMember extends StatelessWidget {
                           },
                         );
                       },
-                      child: Container(
-                        margin: EdgeInsets.only(top: 20.h),
-                        width: 94.w,
-                        height: 94.h,
-                        child: CircleAvatar(
-                          backgroundImage: AssetImage("assets/25.png"),
-                          backgroundColor: Colors.transparent,
-                        ),
+                      child: GetBuilder<Data>(
+                        builder: (context) {
+                          return Container(
+                            margin: EdgeInsets.only(top: 20.h),
+                            width: 94.w,
+                            height: 94.h,
+                            child: CircleAvatar(
+                              backgroundImage: data_controller.display_image(member[index].image),
+                              backgroundColor: Colors.transparent,
+                            ),
+                          );
+                        }
                       ),
                     ),
                     Container(
