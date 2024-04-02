@@ -151,7 +151,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   Future<void> delete_data(String phone) async {
     int place = 0;
     place = await places(phone);
-   await deleteFile(myBox.getAt(index).image);
+   await deleteFile(myBox.getAt(place).image);
     await myBox.deleteAt(place);
     filtered_data.removeWhere((element) => element.phone == phone);
     filtered_active_data.removeWhere((element) => element.phone == phone);
@@ -303,7 +303,6 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
     for (int i = 0; i < myBox.length; i++) {
       if (myBox.getAt(i).phone == phone) {
         current = i;
-        break;
       }
     }
     return current;
@@ -345,9 +344,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
       compressedfile = await FlutterImageCompress.compressAndGetFile(
           original.path, '${dir.path}${DateTime.now()}.jpg',
           minHeight: 400, minWidth: 400, quality: 80);
-      if (compressedfile != null) {
-        print("gg");
-      }
+      if (compressedfile != null) {}
     }
     update();
   }

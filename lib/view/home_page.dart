@@ -6,7 +6,6 @@ import 'package:gym_sof/utils/person_card.dart';
 import 'package:gym_sof/view/add_member.dart';
 import 'package:gym_sof/view/cash_page.dart';
 import 'package:intl/intl.dart';
-import 'package:animations/animations.dart';
 
 class HomePage extends StatelessWidget {
   static int index = 0;
@@ -22,7 +21,7 @@ class HomePage extends StatelessWidget {
         onHorizontalDragEnd: (details) {
           double velocity = details.primaryVelocity ?? 0;
           print(velocity);
-          if (velocity < 0) {
+          if (velocity < -500) {
             Get.to(() => CashPage(), transition: Transition.rightToLeft,duration: Duration(milliseconds: 200));
           }
         },
