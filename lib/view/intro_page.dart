@@ -2,9 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
-import 'package:gym_sof/controller/fira_base_controller.dart';
+import 'package:gym_sof/controller/fire_base_controller.dart';
 import 'package:gym_sof/view/home_page.dart';
-import 'login_page.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 class IntroPage extends StatelessWidget {
@@ -128,12 +127,12 @@ class IntroPage extends StatelessWidget {
                           margin: EdgeInsets.only(left: 95.w),
                           child: InkWell(
                             onTap: () async {
+                              Navigator.pop(context);
+
                               List<ConnectivityResult> connectivityResult =
                                   await Connectivity().checkConnectivity();
                               if ((connectivityResult
                                   .contains(ConnectivityResult.none))) {
-                                Navigator.pop(context);
-
                                 Get.showSnackbar(const GetSnackBar(
                                   message: "Check your internet connection",
                                   animationDuration: Duration(seconds: 1),
@@ -143,22 +142,32 @@ class IntroPage extends StatelessWidget {
                                       .contains(ConnectivityResult.wifi)) ||
                                   (connectivityResult
                                       .contains(ConnectivityResult.mobile))) {
-                                try {
+                                Get.showSnackbar(const GetSnackBar(
+                                  message: "Restoring Data",
+                                  duration: Duration(seconds: 3),
+                                ));
+                                if (await fire_base_controller.isOffline() ==
+                                    false) {
+                                  try {
+                                    await fire_base_controller
+                                        .get_data(data_controller);
+                                    Get.showSnackbar(const GetSnackBar(
+                                      message: "Data restored successfully",
+                                      duration: Duration(seconds: 3),
+                                    ));
+                                  } catch (e) {
+                                    Get.showSnackbar(const GetSnackBar(
+                                      message: "Cant' resote data",
+                                      duration: Duration(seconds: 3),
+                                    ));
+                                  }
+                                } else {
                                   Get.showSnackbar(const GetSnackBar(
-                                    message: "Restoring Data",
+                                    message: "check your connection and try again",
                                     duration: Duration(seconds: 3),
                                   ));
-
-                                  await fire_base_controller
-                                      .get_data(data_controller);
-                                  Get.showSnackbar(const GetSnackBar(
-                                    message: "Data restored successfully",
-                                    duration: Duration(seconds: 3),
-                                  ));
-                                } catch (e) {}
+                                }
                               }
-
-                              Navigator.pop(context);
                             },
                             child: Text(
                               'Restore',
@@ -195,25 +204,32 @@ class IntroPage extends StatelessWidget {
                                   animationDuration: Duration(seconds: 1),
                                   duration: Duration(seconds: 3),
                                 ));
-
-                                try {
-                                  await fire_base_controller.delete_data();
-                                  await fire_base_controller
-                                      .upload_member_doc(data_controller.myBox);
+                                  if(await fire_base_controller.isOffline()==false) {
+                                    try {
                                   await fire_base_controller
                                       .upload_images(data_controller.myBox);
+                                  await fire_base_controller
+                                      .upload_member_doc(data_controller.myBox);
+
                                   Get.showSnackbar(const GetSnackBar(
                                     message: "Data added",
                                     animationDuration: Duration(seconds: 1),
                                     duration: Duration(seconds: 3),
                                   ));
                                 } catch (e) {
+                                  print(e);
                                   Get.showSnackbar(const GetSnackBar(
-                                    message: "Check your connection",
+                                    message: "Can't added data try again",
                                     animationDuration: Duration(seconds: 1),
                                     duration: Duration(seconds: 3),
                                   ));
                                 }
+                                  }
+                                  else{Get.showSnackbar(const GetSnackBar(
+                                    message: "Can't added check your connection",
+                                    animationDuration: Duration(seconds: 1),
+                                    duration: Duration(seconds: 3),
+                                  ));}
                               }
                             },
                             child: Text(

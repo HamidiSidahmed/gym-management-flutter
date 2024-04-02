@@ -24,6 +24,7 @@ class EditMember extends StatelessWidget {
         TextEditingController(text: member[index].paid);
     DateTime end_date = member[index].end_date;
     Data data_controller = Get.find();
+    String filePath=member[index].image!;
     String intial_phone = member[index].phone;
     return Scaffold(
         backgroundColor: Colors.transparent,
@@ -463,7 +464,7 @@ class EditMember extends StatelessWidget {
                                 paid.text,
                                 member[index].blocked,
                                 member[index].blocked_date),
-                            intial_phone);
+                            intial_phone,filePath);
                         Get.back();
                       },
                       child: Container(

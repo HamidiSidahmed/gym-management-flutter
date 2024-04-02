@@ -225,8 +225,9 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
     update();
   }
 
-  Future<void> update_member(Member member, String phone) async {
+  Future<void> update_member(Member member, String phone,String filePath) async {
     int place = 0;
+    await deleteFile(filePath);
     place = await places(phone);
     await myBox.putAt(place, member);
     filter_data(HomePage.filters);

@@ -15,14 +15,16 @@ class HomePage extends StatelessWidget {
     Data data_controller = Get.find();
     TextEditingController filter = TextEditingController(text: "");
     List<Widget> widgets = [];
-   
+
     return Scaffold(
       body: GestureDetector(
         onHorizontalDragEnd: (details) {
           double velocity = details.primaryVelocity ?? 0;
           print(velocity);
           if (velocity < -500) {
-            Get.to(() => CashPage(), transition: Transition.rightToLeft,duration: Duration(milliseconds: 200));
+            Get.to(() => CashPage(),
+                transition: Transition.rightToLeft,
+                duration: Duration(milliseconds: 200));
           }
         },
         child: SizedBox(
@@ -68,7 +70,7 @@ class HomePage extends StatelessWidget {
                                           .toString(),
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 24.sp,
+                                        fontSize: 20.sp,
                                         fontFamily: 'Helvetica Light',
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -77,7 +79,7 @@ class HomePage extends StatelessWidget {
                                       text: ' ',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 24.sp,
+                                        fontSize: 20.sp,
                                         fontFamily: 'Helvetica',
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -87,7 +89,7 @@ class HomePage extends StatelessWidget {
                                           DateFormat.d().format(DateTime.now()),
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 24.sp,
+                                        fontSize: 20.sp,
                                         fontFamily: 'Helvetica',
                                         fontWeight: FontWeight.w700,
                                       ),
@@ -96,7 +98,7 @@ class HomePage extends StatelessWidget {
                                       text: ',',
                                       style: TextStyle(
                                         color: Colors.white,
-                                        fontSize: 24.sp,
+                                        fontSize: 20.sp,
                                         fontFamily: 'Helvetica Light',
                                         fontWeight: FontWeight.w400,
                                       ),
@@ -120,7 +122,7 @@ class HomePage extends StatelessWidget {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.only(top: 10.h),
+                                    margin: EdgeInsets.only(top: 5.h),
                                     width: 281.56.w,
                                     height: 37.h,
                                     child: TextField(
@@ -248,7 +250,66 @@ class HomePage extends StatelessWidget {
                                         text: "Blocked",
                                       )
                                     ]),
-                              )
+                              ),
+                              GetBuilder<Data>(builder: (context) {
+                                return Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Container(
+                                      margin:
+                                          EdgeInsets.only(left: 35, bottom: 10),
+                                      width: 50,
+                                      height: 20.h,
+                                      child: Center(
+                                          child: Text(
+                                        "(${data_controller.filtered_data.length.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.sp),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: 42.w, bottom: 10.h),
+                                      width: 50.w,
+                                      height: 20.h,
+                                      child: Center(
+                                          child: Text(
+                                        "(${data_controller.filtered_active_data.length.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.sp),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: 40, bottom: 10.h),
+                                      width: 50,
+                                      height: 20.h,
+                                      child: Center(
+                                          child: Text(
+                                        "(${data_controller.filtered_exp_data.length.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.sp),
+                                      )),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.only(
+                                          left: 40, bottom: 10.h),
+                                      width: 50.w,
+                                      height: 20.h,
+                                      child: Center(
+                                          child: Text(
+                                        "(${data_controller.filtered_blocked_data.length.toString()})",
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 13.sp),
+                                      )),
+                                    ),
+                                  ],
+                                );
+                              }),
                             ])),
                   ),
                   GetBuilder<Data>(builder: (context) {

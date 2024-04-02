@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/home/sido/gym/gym_sof/linux"
+    "cmake.sourceDirectory": "/home/sido/gym/gym_sof/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

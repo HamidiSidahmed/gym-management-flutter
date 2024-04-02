@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/model/member.dart';
-import 'package:gym_sof/view/home_page.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'view/intro_page.dart';
 
@@ -15,7 +14,7 @@ void main() async {
   Hive.registerAdapter(MemberAdapter());
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
-      options: FirebaseOptions(
+      options:const FirebaseOptions(
           apiKey: "AIzaSyACX3AqIRoJwL-eV5VhDiOBJWsIq7zeArg",
           appId: "1:873812168823:android:20129bdbc96a72d0c53672",
           messagingSenderId: "873812168823",
@@ -25,7 +24,7 @@ void main() async {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (_, child) {
-        return GetMaterialApp(
+        return  GetMaterialApp(
           debugShowCheckedModeBanner: false,
           home: IntroPage(),
         );
