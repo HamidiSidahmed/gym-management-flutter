@@ -11,7 +11,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Data extends GetxController with GetSingleTickerProviderStateMixin {
+class Data extends GetxController  {
   late Box myBox;
   late Member member;
   List<Member> filtered_data = [];
@@ -29,11 +29,9 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   var compressedfile;
   int count = 0;
 
-  late TabController tab_controller;
   ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
-    tab_controller = TabController(length: 4, vsync: this);
     myBox = await Hive.openBox<Member>("MemberBox");
     filtered_data = myBox.values.toList().cast<Member>();
     filtered_active_data = myBox.values
@@ -95,7 +93,6 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
   void onClose() {
     myBox.close();
     scrollController.removeListener(() {});
-    tab_controller.removeListener(() {});
     super.onClose();
   }
 
@@ -344,7 +341,7 @@ class Data extends GetxController with GetSingleTickerProviderStateMixin {
       var original = File(imagepicker!.path);
       compressedfile = await FlutterImageCompress.compressAndGetFile(
           original.path, '${dir.path}${DateTime.now()}.jpg',
-          minHeight: 400, minWidth: 400, quality: 80);
+          minHeight: 1000, minWidth: 1000, quality: 94);
       if (compressedfile != null) {}
     }
     update();

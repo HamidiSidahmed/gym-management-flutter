@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -315,23 +317,24 @@ class HomePage extends StatelessWidget {
                   GetBuilder<Data>(builder: (context) {
                     return Container(
                       height: index == 0
-                          ? (195.h * data_controller.length).toDouble()
+                          ? (188.h * data_controller.length)
                           : index == 1
-                              ? (195.h * data_controller.length_active)
+                              ? (188.h * data_controller.length_active)
                                   .toDouble()
                               : index == 2
-                                  ? (195.h * data_controller.length_exp)
+                                  ? (188.h * data_controller.length_exp)
                                       .toDouble()
-                                  : (195.h * data_controller.length_blocked)
+                                  : (188.h * data_controller.length_blocked)
                                       .toDouble(),
                       width: 1.sw,
                       child: TabBarView(
                         physics: NeverScrollableScrollPhysics(),
                         children: [
                           ListView.builder(
+                            shrinkWrap: true,
                             physics: const NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.only(
-                                top: 15.h, left: 25, right: 25, bottom: 20),
+                            padding:
+                                EdgeInsets.only(top: 15.h, left: 25, right: 25),
                             itemCount: data_controller.length,
                             itemBuilder: (context, index) {
                               return PersonCard(
@@ -342,9 +345,10 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                           ListView.builder(
+                            shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            padding: EdgeInsets.only(
-                                top: 10.h, left: 25, right: 25, bottom: 20),
+                            padding:
+                                EdgeInsets.only(top: 10.h, left: 25, right: 25),
                             itemCount: data_controller.length_active,
                             itemBuilder: (context, index) {
                               return PersonCard(
@@ -354,9 +358,10 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                           ListView.builder(
+                            shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.only(
-                                top: 10.h, left: 25, right: 25, bottom: 20),
+                                top: 10.h, left: 25, right: 25),
                             itemCount: data_controller.length_exp,
                             itemBuilder: (context, index) {
                               return PersonCard(
@@ -366,9 +371,10 @@ class HomePage extends StatelessWidget {
                             },
                           ),
                           ListView.builder(
+                            shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
                             padding: EdgeInsets.only(
-                                top: 10.h, left: 25, right: 25, bottom: 20),
+                                top: 10.h, left: 25, right: 25),
                             itemCount: data_controller.length_blocked,
                             itemBuilder: (context, index) {
                               return PersonCard(

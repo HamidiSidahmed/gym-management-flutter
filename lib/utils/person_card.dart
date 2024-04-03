@@ -322,11 +322,11 @@ class PersonCard extends StatelessWidget {
                                               member[index].name,
                                               member[index].phone,
                                               member[index].end_date,
-                                              "",
+                                              member[index].image,
                                               false,
                                               member[index].start_date,
                                               member[index].plan,
-                                              member[index].plan,
+                                              member[index].paid,
                                               !member[index].blocked,
                                               member[index].blocked_date),
                                           member[index].phone);

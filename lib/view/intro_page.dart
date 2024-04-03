@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
@@ -135,7 +136,8 @@ class IntroPage extends StatelessWidget {
                                   .contains(ConnectivityResult.none))) {
                                 Get.showSnackbar(const GetSnackBar(
                                   message: "Check your internet connection",
-                                  animationDuration: Duration(seconds: 1),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
                                   duration: Duration(seconds: 3),
                                 ));
                               } else if ((connectivityResult
@@ -144,26 +146,53 @@ class IntroPage extends StatelessWidget {
                                       .contains(ConnectivityResult.mobile))) {
                                 Get.showSnackbar(const GetSnackBar(
                                   message: "Restoring Data",
-                                  duration: Duration(seconds: 3),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
+                                  duration: Duration(seconds: 2),
                                 ));
+                                await Future.delayed(Duration(seconds: 2));
                                 if (await fire_base_controller.isOffline() ==
                                     false) {
+                                  Get.dialog(
+                                      const Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      barrierDismissible: false);
+
                                   try {
                                     await fire_base_controller
                                         .get_data(data_controller);
-                                    Get.showSnackbar(const GetSnackBar(
+                                    await Future.delayed(Duration(seconds: 2));
+                                    Get.back();
+                                    Get.showSnackbar(GetSnackBar(
+                                      animationDuration:
+                                          Duration(milliseconds: 500),
                                       message: "Data restored successfully",
-                                      duration: Duration(seconds: 3),
+                                      isDismissible: false,
+                                      onTap: (snack) {
+                                        Get.back();
+                                      },
                                     ));
                                   } catch (e) {
+                                    await Future.delayed(Duration(seconds: 2));
+                                    Get.back();
                                     Get.showSnackbar(const GetSnackBar(
                                       message: "Cant' resote data",
+                                      animationDuration:
+                                          Duration(milliseconds: 500),
                                       duration: Duration(seconds: 3),
                                     ));
                                   }
                                 } else {
+                                  await Future.delayed(Duration(seconds: 2));
+                                  Get.back();
                                   Get.showSnackbar(const GetSnackBar(
-                                    message: "check your connection and try again",
+                                    animationDuration:
+                                        Duration(milliseconds: 500),
+                                    message:
+                                        "check your connection and try again",
                                     duration: Duration(seconds: 3),
                                   ));
                                 }
@@ -192,7 +221,8 @@ class IntroPage extends StatelessWidget {
                                   .contains(ConnectivityResult.none))) {
                                 Get.showSnackbar(const GetSnackBar(
                                   message: "Check your internet connection",
-                                  animationDuration: Duration(seconds: 1),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
                                   duration: Duration(seconds: 3),
                                 ));
                               } else if ((connectivityResult
@@ -201,35 +231,58 @@ class IntroPage extends StatelessWidget {
                                       .contains(ConnectivityResult.mobile))) {
                                 Get.showSnackbar(const GetSnackBar(
                                   message: "Adding data",
-                                  animationDuration: Duration(seconds: 1),
-                                  duration: Duration(seconds: 3),
+                                  animationDuration:
+                                      Duration(milliseconds: 500),
+                                  duration: Duration(seconds: 2),
                                 ));
-                                  if(await fire_base_controller.isOffline()==false) {
-                                    try {
-                                  await fire_base_controller
-                                      .upload_images(data_controller.myBox);
-                                  await fire_base_controller
-                                      .upload_member_doc(data_controller.myBox);
+                                await Future.delayed(Duration(seconds: 2));
+                                if (await fire_base_controller.isOffline() ==
+                                    false) {
+                                  Get.dialog(
+                                   const   Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                      barrierDismissible: false);
+                                  try {
+                                    await fire_base_controller.delete_data();
+                                    await fire_base_controller
+                                        .upload_member_doc(
+                                            data_controller.myBox);
+                                    await Future.delayed(Duration(seconds: 2));
 
+                                    Get.back();
+
+                                    Get.showSnackbar(GetSnackBar(
+                                      message: "Data added",
+                                      animationDuration:
+                                          Duration(milliseconds: 500),
+                                      isDismissible: false,
+                                      onTap: (snack) {
+                                        Get.back();
+                                      },
+                                    ));
+                                  } catch (e) {
+                                    print("can'it add data");
+                                    Get.back();
+
+                                    Get.showSnackbar(const GetSnackBar(
+                                      message: "Can't added data try again",
+                                      animationDuration:
+                                          Duration(milliseconds: 500),
+                                      duration: Duration(seconds: 3),
+                                    ));
+                                  }
+                                } else {
                                   Get.showSnackbar(const GetSnackBar(
-                                    message: "Data added",
-                                    animationDuration: Duration(seconds: 1),
-                                    duration: Duration(seconds: 3),
-                                  ));
-                                } catch (e) {
-                                  print(e);
-                                  Get.showSnackbar(const GetSnackBar(
-                                    message: "Can't added data try again",
-                                    animationDuration: Duration(seconds: 1),
+                                    message:
+                                        "Can't added check your connection",
+                                    animationDuration:
+                                        Duration(milliseconds: 500),
                                     duration: Duration(seconds: 3),
                                   ));
                                 }
-                                  }
-                                  else{Get.showSnackbar(const GetSnackBar(
-                                    message: "Can't added check your connection",
-                                    animationDuration: Duration(seconds: 1),
-                                    duration: Duration(seconds: 3),
-                                  ));}
                               }
                             },
                             child: Text(

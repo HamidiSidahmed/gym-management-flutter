@@ -6,6 +6,7 @@ import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
 import 'package:hive/hive.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FireBaseController extends GetxController {
   late var storageRef;
@@ -106,8 +107,8 @@ class FireBaseController extends GetxController {
 
     var querySnapshot = await membersCollection.get();
 
-    for (final doc in querySnapshot.docs) {
-      final memberData = Member(
+    for (var doc in querySnapshot.docs) {
+      var memberData = Member(
         doc['name'],
         doc['phone'],
         doc['end day'].toDate(),
@@ -124,9 +125,13 @@ class FireBaseController extends GetxController {
 
       // Check for image existence before attempting download
       if (doc['image'] != null && doc['image'].isNotEmpty) {
-        final islandRef = storageRef.child(p.basename(doc['image']));
-        final filePath = doc['image'];
-        final file = File(filePath);
+        Directory? newDirectory = await getExternalStorageDirectory();
+        if (await newDirectory!.exists() == false) {
+          newDirectory.create(recursive: true);
+        }
+        var islandRef = storageRef.child(p.basename(doc['image']));
+        var filePath = doc['image'];
+        var file = File(filePath);
         await islandRef.writeToFile(file);
       }
       print(doc["phone"]);
