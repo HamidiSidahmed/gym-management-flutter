@@ -11,14 +11,14 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:path_provider/path_provider.dart';
 
-class Data extends GetxController  {
+class Data extends GetxController {
   late Box myBox;
   late Member member;
   List<Member> filtered_data = [];
   List<Member> filtered_active_data = [];
   List<Member> filtered_exp_data = [];
   List<Member> filtered_blocked_data = [];
-  bool show=false;
+  bool show = false;
   XFile? imagepicker;
   final limit = 5;
   int length = 0;
@@ -28,7 +28,7 @@ class Data extends GetxController  {
   int length_blocked = 0;
   var compressedfile;
   int count = 0;
-
+  DateTime now = DateTime.now();
   ScrollController scrollController = ScrollController();
   @override
   void onInit() async {
@@ -65,10 +65,8 @@ class Data extends GetxController  {
         ? length_blocked = limit
         : length_blocked = filtered_blocked_data.length;
 
-  
     scrollController.addListener(
       () {
-        print(scrollController.position.pixels);
         if (scrollController.position.pixels ==
             scrollController.position.maxScrollExtent) {
           if (HomePage.index == 0) {
@@ -85,7 +83,6 @@ class Data extends GetxController  {
         }
       },
     );
-    print(length);
     super.onInit();
   }
 
@@ -94,6 +91,27 @@ class Data extends GetxController  {
     myBox.close();
     scrollController.removeListener(() {});
     super.onClose();
+  }
+
+  Future start() async {
+    filtered_data = myBox.values.toList().cast<Member>();
+    filtered_active_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == false &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_exp_data = myBox.values
+        .where((element) =>
+            DateTime.now().isAfter(element.end_date) == true &&
+            element.blocked == false)
+        .toList()
+        .cast<Member>();
+    filtered_blocked_data = myBox.values
+        .where((element) => element.blocked == true)
+        .toList()
+        .cast<Member>();
+    update();
   }
 
   Future<void> push_data(Member added_member) async {
@@ -148,7 +166,7 @@ class Data extends GetxController  {
   Future<void> delete_data(String phone) async {
     int place = 0;
     place = await places(phone);
-   await deleteFile(myBox.getAt(place).image);
+    await deleteFile(myBox.getAt(place).image);
     await myBox.deleteAt(place);
     filtered_data.removeWhere((element) => element.phone == phone);
     filtered_active_data.removeWhere((element) => element.phone == phone);
@@ -222,11 +240,16 @@ class Data extends GetxController  {
     update();
   }
 
-  Future<void> update_member(Member member, String phone,String filePath) async {
+  Future<void> update_member(
+      Member member, String phone, String filePath) async {
     int place = 0;
-    await deleteFile(filePath);
+
     place = await places(phone);
+
     await myBox.putAt(place, member);
+    if (myBox.getAt(place).image != filePath) {
+      await deleteFile(filePath);
+    }
     filter_data(HomePage.filters);
     filtered_active_data = myBox.values
         .where((element) =>
@@ -325,14 +348,16 @@ class Data extends GetxController  {
     );
     return result;
   }
+
   Future<Directory> _getDirectory() async {
-      //This is the name of the folder where the backup is stored
-      Directory? newDirectory = await getExternalStorageDirectory();
-      if (await newDirectory!.exists() == false) {
-        return newDirectory.create(recursive: true);
-      }
-      return newDirectory;
+    //This is the name of the folder where the backup is stored
+    Directory? newDirectory = await getExternalStorageDirectory();
+    if (await newDirectory!.exists() == false) {
+      return newDirectory.create(recursive: true);
     }
+    return newDirectory;
+  }
+
   Future compress() async {
     Directory dir = await _getDirectory();
     if (imagepicker == null) {
@@ -346,24 +371,26 @@ class Data extends GetxController  {
     }
     update();
   }
-  ImageProvider display_image(String? path){
-    if(path==""){
+
+  ImageProvider display_image(String? path) {
+    if (path == "") {
       return const AssetImage("assets/25.png");
-    }
-    else {return FileImage(File(path!));
-    }
-  }
- Future<void> deleteFile(String filePath)async {
-  try {
-    File file = File(filePath);
-    if (file.existsSync()) {
-      file.deleteSync();
-      print('File deleted successfully.');
     } else {
-      print('File does not exist at the specified path.');
+      return FileImage(File(path!));
     }
-  } catch (e) {
-    print('Error deleting file: $e');
   }
-}
+
+  Future<void> deleteFile(String filePath) async {
+    try {
+      File file = File(filePath);
+      if (file.existsSync()) {
+        file.deleteSync();
+        print('File deleted successfully.');
+      } else {
+        print('File does not exist at the specified path.');
+      }
+    } catch (e) {
+      print('Error deleting file: $e');
+    }
+  }
 }

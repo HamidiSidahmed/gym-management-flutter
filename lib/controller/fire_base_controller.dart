@@ -30,23 +30,38 @@ class FireBaseController extends GetxController {
         File file = File(box.getAt(i).image);
         mountainsRef = storageRef.child(p.basename(box.getAt(i).image));
         try {
-          try {
-            await mountainsRef.delete();
-          } catch (e) {}
+          FullMetadata metadata = await mountainsRef.getMetadata();
+        } on FirebaseException catch (error) {
+          print("no one here");
 
           await mountainsRef.putFile(file);
-
-          print("image done");
-        } catch (e) {
-          print("can'i added image");
         }
       }
     }
+
+    try {
+      ListResult result = await storageRef.listAll();
+      List<Reference> allFiles = result.items;
+
+      for (var fileRef in allFiles) {
+        String filePath = fileRef.fullPath;
+        bool exists = false;
+        for (int i = 0; i < box.length; i++) {
+          if (p.basename(box.getAt(i).image) == filePath) {
+            exists = true;
+            break;
+          }
+        }
+        if (exists == false) {
+         await fileRef.delete();
+        }
+      }
+    } catch (e) {}
   }
 
   CollectionReference membersCollection =
       FirebaseFirestore.instance.collection('members');
-  final db = FirebaseFirestore.instance;
+  var db = FirebaseFirestore.instance;
   Map<String, dynamic> member = {
     "name": "",
     "phone": "",

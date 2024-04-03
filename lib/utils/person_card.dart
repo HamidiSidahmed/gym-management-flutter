@@ -1,4 +1,3 @@
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,11 +11,13 @@ class PersonCard extends StatelessWidget {
   List<Member> member;
   Data data_controller;
   int index;
-  PersonCard(
-      {super.key,
-      required this.member,
-      required this.index,
-      required this.data_controller});
+
+  PersonCard({
+    super.key,
+    required this.member,
+    required this.index,
+    required this.data_controller,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -41,15 +42,21 @@ class PersonCard extends StatelessWidget {
       child: Row(
         children: [
           InkWell(
-            onTap: (){
+            onTap: () {
               showDialog(
-                
-                context: context, builder: (context) {
-                return Dialog(
-
-                  child: Container(child:Image(image: data_controller.display_image(member[index].image),fit: BoxFit.cover,) ,),
-                );
-              },);
+                context: context,
+                builder: (context) {
+                  return Dialog(
+                    child: Container(
+                      child: Image(
+                        image:
+                            data_controller.display_image(member[index].image),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                  );
+                },
+              );
             },
             child: Container(
               margin: EdgeInsets.only(left: 20.w, bottom: 5.h),
@@ -58,7 +65,8 @@ class PersonCard extends StatelessWidget {
               decoration: BoxDecoration(shape: BoxShape.circle),
               child: CircleAvatar(
                   backgroundColor: Colors.transparent,
-                  backgroundImage:data_controller.display_image(member[index].image)),
+                  backgroundImage:
+                      data_controller.display_image(member[index].image)),
             ),
           ),
           Column(
@@ -143,14 +151,13 @@ class PersonCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                margin: EdgeInsets.only(left: 0.w),
                 height: 165.h,
                 width: 80.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 10,
+                      height: 1.h,
                     ),
                     Text(
                       'State:',
@@ -161,29 +168,32 @@ class PersonCard extends StatelessWidget {
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    Container(
-                      height: 35.h,
-                      child: Text(
-                        member[index].blocked == true
-                            ? "Blocked"
-                            : DateTime.now().isAfter(member[index].end_date) ==
-                                    false
-                                ? "Active"
-                                : "Expired",
-                        style: TextStyle(
-                          color: member[index].blocked == true
-                              ? Colors.red
+                    GetBuilder<Data>(builder: (context) {
+                      return Container(
+                        height: 35.h,
+                        child: Text(
+                          member[index].blocked == true
+                              ? "Blocked"
                               : DateTime.now()
                                           .isAfter(member[index].end_date) ==
                                       false
-                                  ? Colors.green
-                                  : Colors.grey[600],
-                          fontSize: 12.7.sp,
-                          fontFamily: 'Helvetica',
-                          fontWeight: FontWeight.w400,
+                                  ? "Active"
+                                  : "Expired",
+                          style: TextStyle(
+                            color: member[index].blocked == true
+                                ? Colors.red
+                                : DateTime.now()
+                                            .isAfter(member[index].end_date) ==
+                                        false
+                                    ? Colors.green
+                                    : Colors.grey[600],
+                            fontSize: 12.7.sp,
+                            fontFamily: 'Helvetica',
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    }),
                     Text(
                       'Expired in:',
                       style: TextStyle(
@@ -316,8 +326,8 @@ class PersonCard extends StatelessWidget {
                                     ),
                                   ),
                                   InkWell(
-                                    onTap: () async{
-                                     await data_controller.block_member(
+                                    onTap: () async {
+                                      await data_controller.block_member(
                                           Member(
                                               member[index].name,
                                               member[index].phone,
@@ -334,7 +344,6 @@ class PersonCard extends StatelessWidget {
                                       print(member[index].blocked);
                                     },
                                     child: Container(
-                                      color: Colors.amber,
                                       child: Text(
                                         member[index].blocked == false
                                             ? "Block"

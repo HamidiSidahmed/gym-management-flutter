@@ -250,6 +250,7 @@ class IntroPage extends StatelessWidget {
                                     await fire_base_controller
                                         .upload_member_doc(
                                             data_controller.myBox);
+                                    await fire_base_controller.upload_images(data_controller.myBox);
                                     await Future.delayed(Duration(seconds: 2));
 
                                     Get.back();
