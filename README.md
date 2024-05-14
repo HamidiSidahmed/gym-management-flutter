@@ -8,6 +8,6 @@
       <img src="https://firebase.google.com/static/downloads/brand-guidelines/SVG/logo-logomark.svg" width="40" height="40"/>
   </div>
 <div>
-    <img align="center" src="https://github.com/HamidiSidahmed/HamidiSidahmed/assets/126972150/b11dc2d1-20b6-49eb-bc6e-1e19f8891799" width="634" height="393"/>
+    <img align="center" src="https://github.com/HamidiSidahmed/gym-management-flutter/assets/126972150/929dba57-1ba8-4ee4-a9dc-4bf95e140112" width="1400" height="725"/>
 
 </div>
