@@ -53,7 +53,7 @@ class FireBaseController extends GetxController {
           }
         }
         if (exists == false) {
-         await fileRef.delete();
+          await fileRef.delete();
         }
       }
     } catch (e) {}
@@ -117,6 +117,7 @@ class FireBaseController extends GetxController {
   }
 
   Future<void> get_data(Data data) async {
+    data.myBox.clear();
     final membersCollection = FirebaseFirestore.instance
         .collection('members'); // Use collection name directly
 
@@ -125,7 +126,7 @@ class FireBaseController extends GetxController {
     for (var doc in querySnapshot.docs) {
       var memberData = Member(
         doc['name'],
-        doc['phone'],
+        int.parse(doc['phone']),
         doc['end day'].toDate(),
         doc['image'],
         true, // Assuming this is a default value
@@ -136,7 +137,8 @@ class FireBaseController extends GetxController {
         doc['blocked day'].toDate(),
       );
 
-      await data.push_data(memberData); // Call push_data directly
+      await data.push_data(
+          memberData, int.parse(doc['phone'])); // Call push_data directly
 
       // Check for image existence before attempting download
       if (doc['image'] != null && doc['image'].isNotEmpty) {
@@ -149,7 +151,14 @@ class FireBaseController extends GetxController {
         var file = File(filePath);
         await islandRef.writeToFile(file);
       }
-      print(doc["phone"]);
+    }
+    for (int i = data.myBox.length - 1; i >= 0; i--) {
+      Member current =data.myBox.getAt(i);
+      if (current != null) {
+        // Update the phone number
+        current.phone = i + 1;
+        await data.myBox.putAt(i, current);
+      }
     }
   }
 

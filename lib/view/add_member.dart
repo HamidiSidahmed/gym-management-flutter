@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
+import 'package:gym_sof/view/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -14,6 +15,11 @@ class AddMember extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int filter_active_length = 0;
+    int filter_exp_length = 0;
+    int filter_blocked_length = 0;
+    int filter_length = 0;
+
     Data data_controller = Get.find();
     TextEditingController name = TextEditingController();
     TextEditingController phone = TextEditingController();
@@ -442,7 +448,7 @@ class AddMember extends StatelessWidget {
                       onTap: () async {
                         await data_controller.push_data(Member(
                             name.text,
-                            phone.text,
+                            int.parse(phone.text.trim()),
                             end_date,
                             data_controller.compressedfile == null
                                 ? ""
@@ -452,8 +458,71 @@ class AddMember extends StatelessWidget {
                             plan.text,
                             paid.text,
                             false,
-                            DateTime(2023)));
-                        data_controller.filter_data("");
+                            DateTime(2023)),int.parse(phone.text.trim()));
+                        filter_blocked_length = data_controller.myBox.values
+                            .where((element) =>
+                                element.name
+                                    .toLowerCase()
+                                    .contains(HomePage.filters.toLowerCase()) &&
+                                element.blocked == true)
+                            .toList()
+                            .length;
+                        filter_exp_length = data_controller.myBox.values
+                            .where((element) =>
+                                element.name
+                                    .toLowerCase()
+                                    .contains(HomePage.filters.toLowerCase()) &&
+                                DateTime.now().isAfter(element.end_date) ==
+                                    true &&
+                                element.blocked == false)
+                            .toList()
+                            .length;
+
+                        filter_active_length = data_controller.myBox.values
+                            .where((element) =>
+                                element.name
+                                    .toLowerCase()
+                                    .contains(HomePage.filters.toLowerCase()) &&
+                                DateTime.now().isAfter(element.end_date) ==
+                                    false &&
+                                element.blocked == false)
+                            .toList()
+                            .length;
+
+                        filter_length = data_controller.myBox.values
+                            .where((element) => element.name
+                                .toLowerCase()
+                                .contains(HomePage.filters.toLowerCase()))
+                            .toList()
+                            .length;
+                        data_controller.starting_blocked = 0;
+
+                        data_controller.starting =
+                            data_controller.starting_active =
+                                data_controller.starting_expired = 0;
+
+                        data_controller.starting_expired = 0;
+                        filter_exp_length >= 10
+                            ? data_controller.ending_expired = 10
+                            : data_controller.ending_expired =
+                                filter_exp_length;
+                        data_controller.starting_active = 0;
+                        filter_active_length >= 10
+                            ? data_controller.end_active = 10
+                            : data_controller.end_active = filter_active_length;
+
+                        data_controller.starting = 0;
+                        filter_length >= 10
+                            ? data_controller.ending = 10
+                            : data_controller.ending = filter_length;
+                        filter_blocked_length >= 10
+                            ? data_controller.ending_blocked = 10
+                            : data_controller.ending_blocked =
+                                filter_blocked_length;
+                                                        data_controller.compressedfile = null;
+
+                        data_controller.filter_data(HomePage.filters);
+
                         Get.back();
                       },
                       child: Container(

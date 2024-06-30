@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 import '../controller/data_controller.dart';
+
 class CashPage extends StatelessWidget {
   const CashPage({super.key});
   @override
@@ -14,8 +15,10 @@ class CashPage extends StatelessWidget {
     double year_cush = 0;
     int length = 0;
     for (int i = 0; i < data_controller.myBox.length; i++) {
-      if ( data_controller.myBox.getAt(i).start_date.year == DateTime.now().year) {
-        if (data_controller.myBox.getAt(i).start_date.month == DateTime.now().month) {
+      if (data_controller.myBox.getAt(i).start_date.year ==
+          DateTime.now().year) {
+        if (data_controller.myBox.getAt(i).start_date.month ==
+            DateTime.now().month) {
           if (data_controller.myBox.getAt(i).paid.isEmpty) {
             data_controller.myBox.getAt(i).paid = "0";
           }
@@ -26,12 +29,14 @@ class CashPage extends StatelessWidget {
           if (data_controller.myBox.getAt(i).paid.isEmpty) {
             data_controller.myBox.getAt(i).paid = "0";
           }
-          prev_cush = double.parse(data_controller.myBox.getAt(i).paid) + prev_cush;
+          prev_cush =
+              double.parse(data_controller.myBox.getAt(i).paid) + prev_cush;
         }
         if (data_controller.myBox.getAt(i).paid.isEmpty) {
-          data_controller.myBox.getAt(i).paid= "0";
+          data_controller.myBox.getAt(i).paid = "0";
         }
-        year_cush = double.parse(data_controller.myBox.getAt(i).paid) + year_cush;
+        year_cush =
+            double.parse(data_controller.myBox.getAt(i).paid) + year_cush;
       }
     }
     return Scaffold(
@@ -58,7 +63,7 @@ class CashPage extends StatelessWidget {
                       child: Column(
                         children: [
                           Container(
-                            margin: EdgeInsets.only(top: 60.h),
+                            margin: EdgeInsets.only(top: 175.h),
                             child: Text(
                               'REVENUE',
                               textAlign: TextAlign.center,
@@ -104,10 +109,11 @@ class CashPage extends StatelessWidget {
                                 ),
                               ),
                               Container(
-                                  margin: EdgeInsets.only(top: 12.h, right: 2.w),
+                                  margin:
+                                      EdgeInsets.only(top: 12.h, right: 2.w),
                                   alignment: Alignment.center,
-                                  child: GetBuilder<Data>(
-                                      builder: (controller) {
+                                  child:
+                                      GetBuilder<Data>(builder: (controller) {
                                     return Text(
                                       '${year_cush} DZD',
                                       textAlign: TextAlign.center,
@@ -136,8 +142,8 @@ class CashPage extends StatelessWidget {
                                   ),
                                   child: Stack(children: [
                                     Container(
-                                      margin:
-                                          EdgeInsets.only(top: 42.h, left: 25.w),
+                                      margin: EdgeInsets.only(
+                                          top: 42.h, left: 25.w),
                                       child: Text(
                                         'CURRENT MONTH',
                                         textAlign: TextAlign.center,
@@ -180,8 +186,8 @@ class CashPage extends StatelessWidget {
                                   ),
                                   child: Stack(children: [
                                     Container(
-                                      margin:
-                                          EdgeInsets.only(top: 42.h, left: 25.w),
+                                      margin: EdgeInsets.only(
+                                          top: 42.h, left: 25.w),
                                       child: Text(
                                         'PAST MONTH',
                                         textAlign: TextAlign.center,
@@ -215,123 +221,12 @@ class CashPage extends StatelessWidget {
                               ],
                             ),
                           ),
-                          GetBuilder<Data>(
-                            builder: (controller) {
-                              return Container(
-                                margin: EdgeInsets.only(top: 17.h),
-                                width: 350.w,
-                                height:
-                                    length <= 6 ? 500.h : (length * 550.h) / 7,
-                                decoration: ShapeDecoration(
-                                  color: Color(0xFF232121),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(23),
-                                  ),
-                                  shadows: const [
-                                    BoxShadow(
-                                      color: Color(0x3F000000),
-                                      blurRadius: 22,
-                                      offset: Offset(0, 0),
-                                      spreadRadius: 4,
-                                    )
-                                  ],
-                                ),
-                                child: ListView.builder(
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: length,
-                                  itemBuilder: (context, index) {
-                                    if (data_controller.myBox.getAt(index).start_date
-                                            .month ==
-                                        DateTime.now().month) {
-                                      return Container(
-                                        child: Row(
-                                          children: [
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Container(
-                                                  width: 100.w,
-                                                  margin: EdgeInsets.only(
-                                                      top: 25.h, left: 25.w),
-                                                  child: Text(
-                                                    '${data_controller.myBox.getAt(index).name}',
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 15.sp,
-                                                      fontFamily: 'Helvetica',
-                                                      fontWeight: FontWeight.w700,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      left: 25.w, top: 3.h),
-                                                  child: Text(
-                                                    DateFormat.yMd().format(data_controller.myBox.getAt(index).start_date),
-                                                    style: TextStyle(
-                                                      color: Color(0xFFC0BDBD),
-                                                      fontSize: 11.sp,
-                                                      fontFamily: 'Helvetica',
-                                                      fontWeight: FontWeight.w400,
-                                                    ),
-                                                  ),
-                                                ),
-                                                Container(
-                                                  margin: EdgeInsets.only(
-                                                      top: 15.h, left: 26.w),
-                                                  width: 65.w,
-                                                  decoration: ShapeDecoration(
-                                                    shape: RoundedRectangleBorder(
-                                                      side: BorderSide(
-                                                        width: 0.50,
-                                                        strokeAlign: BorderSide
-                                                            .strokeAlignCenter,
-                                                        color: Color(0xFFC7C7C7),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                              ],
-                                            ),
-                                            Container(
-                                              width: 80.w,
-                                              margin:
-                                                  EdgeInsets.only(left: 115.w),
-                                              child: Text(
-                                                '${data_controller.myBox.getAt(index).paid} DZD',
-                                                style: TextStyle(
-                                                  color: Color(0xFF00A237),
-                                                  fontSize: 14.sp,
-                                                  fontFamily: 'Helvetica',
-                                                  fontWeight: FontWeight.w700,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              child: Icon(
-                                                Icons.arrow_upward,
-                                                color: Color(0xFF00A237),
-                                                size: 17.sp,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    }
-                                  },
-                                ),
-                              );
-                            },
-                          )
                         ],
                       ),
                     ),
                   ),
                 ],
               ),
-            
-              
             ],
           ),
         ),

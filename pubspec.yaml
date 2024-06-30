@@ -23,15 +23,32 @@ dependencies:
   connectivity_plus: ^6.0.1
   path: ^1.9.0
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
   hive_generator: 
   build_runner: 
+flutter_native_splash:
+  color: "#D3D3D3"
+  image: assets/gymr.png
+  image_dark: assets/gymr.png
+  color_dark: "#D3D3D3"
+  android_12:
+    color: "#D3D3D3"
+    image: assets/gymr.png
+    image_dark: assets/gymr.png
+    color_dark: "#D3D3D3"
+  android: true
+  ios: false
+  web: false
+
 flutter_launcher_icons:
   android: "launcher_icon"
   image_path: "assets/gym.png"
+ 
+   
   min_sdk_android: 21 
 flutter:
   uses-material-design: true

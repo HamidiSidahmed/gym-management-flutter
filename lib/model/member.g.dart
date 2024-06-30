@@ -18,7 +18,7 @@ class MemberAdapter extends TypeAdapter<Member> {
     };
     return Member(
       fields[0] as String,
-      fields[1] as String,
+      fields[1] as int,
       fields[2] as DateTime,
       fields[3] as String?,
       fields[4] as bool,

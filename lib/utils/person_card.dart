@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
 import 'package:gym_sof/view/edit_member.dart';
+import 'package:gym_sof/view/home_page.dart';
 import 'package:intl/intl.dart';
 
 class PersonCard extends StatelessWidget {
@@ -24,7 +25,7 @@ class PersonCard extends StatelessWidget {
     DateTime bloked_date = DateTime.now();
     return Container(
       margin: EdgeInsets.only(bottom: 20.h),
-      height: 165.h,
+      height: 175.h,
       decoration: ShapeDecoration(
         color: Colors.white,
         shape: RoundedRectangleBorder(
@@ -74,7 +75,7 @@ class PersonCard extends StatelessWidget {
             children: [
               Container(
                 margin: EdgeInsets.only(left: 10.w),
-                height: 165.h,
+                height: 175.h,
                 width: 115.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -113,7 +114,7 @@ class PersonCard extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      member[index].phone,
+                      member[index].phone.toString(),
                       style: TextStyle(
                         color: Colors.black,
                         fontSize: 12.5.sp,
@@ -151,13 +152,13 @@ class PersonCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                height: 165.h,
+                height: 175.h,
                 width: 80.w,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(
-                      height: 1.h,
+                      height: 10.h,
                     ),
                     Text(
                       'State:',
@@ -339,9 +340,8 @@ class PersonCard extends StatelessWidget {
                                               member[index].paid,
                                               !member[index].blocked,
                                               member[index].blocked_date),
-                                          member[index].phone);
+                                          member[index].phone.toString());
                                       Navigator.pop(context);
-                                      print(member[index].blocked);
                                     },
                                     child: Container(
                                       child: Text(
@@ -353,7 +353,7 @@ class PersonCard extends StatelessWidget {
                                                 member[index].blocked == false
                                                     ? Colors.red
                                                     : Colors.black,
-                                            fontSize: 16,
+                                            fontSize: 16.sp,
                                             fontWeight: FontWeight.bold),
                                       ),
                                     ),
@@ -385,10 +385,8 @@ class PersonCard extends StatelessWidget {
                           children: [
                             InkWell(
                               onTap: () {
-                                print(member[index].phone);
-
-                                data_controller
-                                    .delete_data(member[index].phone);
+                                data_controller.delete_data(
+                                    member[index].phone.toString());
                                 Navigator.pop(context);
                               },
                               child: SizedBox(

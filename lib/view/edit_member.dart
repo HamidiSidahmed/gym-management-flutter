@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:gym_sof/controller/data_controller.dart';
 import 'package:gym_sof/model/member.dart';
+import 'package:gym_sof/view/home_page.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
@@ -14,18 +15,25 @@ class EditMember extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    int filter_active_length = 0;
+    int filter_exp_length = 0;
+    int filter_blocked_length = 0;
+    int filter_length = 0;
+
     TextEditingController name =
         TextEditingController(text: member[index].name);
     TextEditingController phone =
-        TextEditingController(text: member[index].phone);
+        TextEditingController(text: member[index].phone.toString());
     TextEditingController plan =
         TextEditingController(text: member[index].plan);
     TextEditingController paid =
         TextEditingController(text: member[index].paid);
     DateTime end_date = member[index].end_date;
     Data data_controller = Get.find();
-    String filePath=member[index].image!;
-    String intial_phone = member[index].phone;
+    String filePath = member[index].image!;
+           data_controller.compressedfile = null;
+
+    String intial_phone = member[index].phone.toString();
     return Scaffold(
         backgroundColor: Colors.transparent,
         resizeToAvoidBottomInset: true,
@@ -453,7 +461,7 @@ class EditMember extends StatelessWidget {
                         data_controller.update_member(
                             Member(
                                 name.text,
-                                phone.text,
+                                int.parse(phone.text.trim()),
                                 end_date,
                                 data_controller.compressedfile == null
                                     ? member[index].image
@@ -464,7 +472,10 @@ class EditMember extends StatelessWidget {
                                 paid.text,
                                 member[index].blocked,
                                 member[index].blocked_date),
-                            intial_phone,filePath);
+                            intial_phone,
+                            filePath);
+                        data_controller.compressedfile = null;
+                        print(member[index].image);
                         Get.back();
                       },
                       child: Container(

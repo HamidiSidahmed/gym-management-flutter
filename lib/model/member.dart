@@ -7,7 +7,7 @@ class Member {
   String name;
 
   @HiveField(1)
-  String phone;
+  int phone;
 
   @HiveField(2)
   DateTime end_date;
