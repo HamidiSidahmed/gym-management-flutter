@@ -13,12 +13,6 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(MemberAdapter());
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options:const FirebaseOptions(
-          apiKey: "AIzaSyACX3AqIRoJwL-eV5VhDiOBJWsIq7zeArg",
-          appId: "1:873812168823:android:20129bdbc96a72d0c53672",
-          messagingSenderId: "873812168823",
-          projectId: "gym-sof"));
   runApp(ScreenUtilInit(
       designSize: const Size(393, 851),
       minTextAdapt: true,
